@@ -12,7 +12,12 @@ function App() {
   return (
     <>
       <Navbar />
-      <Card />
+      <Card
+        title="Card Title"
+        description="This is a description of the card content. It gives a brief overview of the topic."
+        link="#"
+        inputPlaceholder="Type something here..."
+      />
       <Footer />
     </>
   )
