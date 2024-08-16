@@ -10,6 +10,9 @@ function App() {
     <>
       <Navbar />
       <YTSearch />
+      <Card />
+      <Card />
+      <Card />
       <Footer />
     </>
   );
