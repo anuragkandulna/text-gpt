@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import AudioPlayer from './components/AudioPlayer';
 import YTSearch from './components/YTSearch';
 import ProductFeatures from './components/ProductFeatures';
+import UserRegistration from './components/UserRegistration';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Navbar />
       {/* <YTSearch /> */}
       <ProductFeatures />
+      {/* <UserRegistration /> */}
       <Footer />
     </>
   );
