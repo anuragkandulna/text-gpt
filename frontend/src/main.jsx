@@ -9,6 +9,7 @@ import {
     createRoutesFromElements,
 } from "react-router-dom";
 import ProductFeatures from "./components/ProductFeatures/ProductFeatures.jsx";
+import Layout from "./Layout.jsx";
 
 // All the public routes down here:
 const router = createBrowserRouter(
