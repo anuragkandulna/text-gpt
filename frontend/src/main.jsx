@@ -10,6 +10,8 @@ import {
 } from "react-router-dom";
 import ProductFeatures from "./components/ProductFeatures/ProductFeatures.jsx";
 import Layout from "./Layout.jsx";
+import UserRegistration from "./components/UserRegistration/UserRegistration.jsx";
+import Card from "./components/Card.jsx";
 
 // All the public routes down here:
 const router = createBrowserRouter(
