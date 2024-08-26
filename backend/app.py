@@ -20,13 +20,18 @@ def login():
     username = data.get('username')
     password = data.get('password')
 
+    print(f'User is tring to login in: {username} : {password}')
+
     # Find the user in the database
     user = users_collection.find_one({"username": username})
 
-    if user and bcrypt.check_password_hash(user['password_hash'], password):
-        return jsonify({"message": "Login successful!", "user_id": str(user['_id'])}), 200
-    else:
-        return jsonify({"message": "Invalid username or password"}), 401
+    if not user:
+        return jsonify({"message": "User not found"}), 404
+
+    if not bcrypt.check_password_hash(user['password_hash'], password):
+        return jsonify({"message": "Incorrect password"}), 403
+
+    return jsonify({"message": "Login successful!", "user_id": str(user['_id'])}), 200
 
 # Register route (if you need to add new users)
 @app.route('/register', methods=['POST'])
