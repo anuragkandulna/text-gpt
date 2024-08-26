@@ -37,6 +37,7 @@ def login():
         else:
             return jsonify({"message": "Incorrect password"}), 403
     except Exception as e:
+        print(f'Exception in user login API/login: {e}')
         return jsonify({"message": "An error occurred"}), 500
 
 # Register route (if you need to add new users)
@@ -76,6 +77,7 @@ def register():
         return jsonify({"message": "User registered successfully!"}), 201
     
     except Exception as e:
+        print(f'Exception in new user registration API/register: {e}')
         return jsonify({"message": "An error occurred during registration"}), 500
 
 if __name__ == '__main__':
