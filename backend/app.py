@@ -1,9 +1,16 @@
 from flask import Flask, request, jsonify
 from flask_bcrypt import Bcrypt
 from pymongo import MongoClient
+from flask_cors import CORS
+from datetime import datetime, timezone
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
+
+# CORS(app)  # This will enable CORS for all routes
+# CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
+CORS(app, resources={r"/*": {"origins": "*"}})
+
 
 # Connect to MongoDB Atlas
 # mongodb+srv://baron:agxscoCGbSly2aXw@cluster91181.jkqew.mongodb.net/test?retryWrites=true&w=majority
@@ -33,6 +40,7 @@ def login():
         stored_hash = user.get('password_hash')
 
         if bcrypt.check_password_hash(stored_hash, password):
+            print(f'{username} successfully logged in on {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S %Z')}')
             return jsonify({"message": "Login successful!", "user_id": str(user['_id'])}), 200
         else:
             return jsonify({"message": "Incorrect password"}), 403
