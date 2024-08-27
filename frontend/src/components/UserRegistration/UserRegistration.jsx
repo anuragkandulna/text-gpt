@@ -23,6 +23,10 @@ export default function UserRegistration() {
 
         // Dispatch username and password here: do this later
         // useDispatch();
+        setUsername("user111");
+
+        console.log(`Username: ${username}`);
+        console.log(`Password: ${password}`);
 
         // Send request to Login API using Async
         const response = await fetch("http://127.0.0.1:5000/login", {
@@ -31,7 +35,7 @@ export default function UserRegistration() {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                email,
+                username,
                 password,
             }),
         });
@@ -104,7 +108,7 @@ export default function UserRegistration() {
                                                 <input
                                                     id="email"
                                                     name="email"
-                                                    type="email"
+                                                    type="text"
                                                     value={username}
                                                     onChange={(e) =>
                                                         setUsername(
