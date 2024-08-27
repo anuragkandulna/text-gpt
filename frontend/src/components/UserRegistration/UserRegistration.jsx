@@ -18,11 +18,39 @@ export default function UserRegistration() {
     const [password, setPassword] = useState("");
 
     // 2. Dispatch user credentials to redux store
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
 
-        // Dispatch username and password here
-        useDispatch();
+        // Dispatch username and password here: do this later
+        // useDispatch();
+
+        // Send request to Login API using Async
+        const response = await fetch("http://127.0.0.1:5000/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                email,
+                password,
+            }),
+        });
+
+        // Extract data from response
+        const data = await response.json();
+        console.log(`Login API response data: ${data}`);
+
+        // Based on response give feedback to user and redirect.
+        if (response.ok) {
+            // Store token in the store: todo
+            console.log("Login successful!");
+
+            alert("Login successful!");
+        } else {
+            console.error("Login Failed!!!");
+
+            alert("Login Failed!!!");
+        }
     };
 
     return (
