@@ -12,6 +12,8 @@ import ProductFeatures from "./components/ProductFeatures/ProductFeatures.jsx";
 import Layout from "./Layout.jsx";
 import UserRegistration from "./components/UserRegistration/UserRegistration.jsx";
 import Card from "./components/Card.jsx";
+import { Provider } from "react-redux";
+import { store } from "./app/store.js";
 
 // All the public routes down here:
 const router = createBrowserRouter(
@@ -26,6 +28,8 @@ const router = createBrowserRouter(
 
 createRoot(document.getElementById("root")).render(
     <StrictMode>
-        <RouterProvider router={router} />
+        <Provider store={store}>
+            <RouterProvider router={router} />
+        </Provider>
     </StrictMode>
 );
