@@ -9,23 +9,22 @@ const initialUser = {
 
 export const userSlice = createSlice({
     name: "user",
-
+    initialUser,
     // LIST OF ALL REDUCERS
     reducers: {
         // 1. Authenticate an existing user.
-        authenticateUser: (state, action) => {
-            // const user = {
-            //     username: "todo_name",
-            //     email: "user123@email.com",
-            //     password: "password_hash",
-            //     isAuthenticated: false,
-            // };
-
-            // state.initialUser.push()
-
-            // start here
-            if (state.initialUser.username === 0) {
-            }
+        loginUser: (state, action) => {
+            // Deploy the payload from user into the store
+            state.username = action.payload.username;
+            state.email = action.payload.email;
+            state.password = action.payload.password;
+            state.isAuthenticated = true;
         },
     },
 });
+
+// 2. Export all reducers individually
+export const { loginUser } = userSlice.actions;
+
+// 3. Register the reducer to store so that the store is aware of reducers accessing the data
+export default userSlice.reducer;
