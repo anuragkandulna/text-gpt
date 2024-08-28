@@ -8,25 +8,41 @@ import {
     DialogTitle,
 } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/24/outline";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../../features/user/userSlice";
 
 export default function UserRegistration() {
     const [open, setOpen] = useState(true);
 
     // 1. Existing user login steps start here
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
+    // const [username, setUsername] = useState("");
+    // const [password, setPassword] = useState("");
 
-    // 2. Dispatch user credentials to redux store
+    const [user, setUser] = useState({
+        username: "",
+        password: "",
+        email: "",
+        isAuthenticated: false,
+    });
+
+    // 2. Handle change events in input fields
+    const handleChange = (e) => {
+        setUser({
+            ...user,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    // 3. Dispatch user credentials to redux store
     const handleLogin = async (e) => {
         e.preventDefault();
 
         // Dispatch username and password here: do this later
         // useDispatch();
-        setUsername("user111");
+        // setUsername("user111");
 
-        console.log(`Username: ${username}`);
-        console.log(`Password: ${password}`);
+        // console.log(`Username: ${username}`);
+        // console.log(`Password: ${password}`);
 
         // Send request to Login API using Async
         const response = await fetch("http://127.0.0.1:5000/login", {
@@ -47,6 +63,10 @@ export default function UserRegistration() {
         // Based on response give feedback to user and redirect.
         if (response.ok) {
             // Store token in the store: todo
+            setUser({
+                ...user,
+                isAuthenticated: true,
+            });
             console.log("Login successful!");
 
             alert("Login successful!");
@@ -55,6 +75,9 @@ export default function UserRegistration() {
 
             alert("Login Failed!!!");
         }
+
+        // Dispatch the user payload
+        useDispatch(loginUser(user));
     };
 
     return (
@@ -109,12 +132,8 @@ export default function UserRegistration() {
                                                     id="email"
                                                     name="email"
                                                     type="text"
-                                                    value={username}
-                                                    onChange={(e) =>
-                                                        setUsername(
-                                                            e.target.value
-                                                        )
-                                                    }
+                                                    value={user.username}
+                                                    onChange={handleChange}
                                                     required
                                                     autoComplete="email"
                                                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -144,12 +163,8 @@ export default function UserRegistration() {
                                                     id="password"
                                                     name="password"
                                                     type="password"
-                                                    value={password}
-                                                    onChange={(e) =>
-                                                        setPassword(
-                                                            e.target.value
-                                                        )
-                                                    }
+                                                    value={user.password}
+                                                    onChange={handleChange}
                                                     required
                                                     autoComplete="current-password"
                                                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
