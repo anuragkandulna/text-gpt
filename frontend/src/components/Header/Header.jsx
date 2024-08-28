@@ -62,19 +62,21 @@ export default function Navbar() {
                     </div>
                     <div className="flex items-center">
                         <div className="md:ml-4 md:flex md:flex-shrink-0 md:items-center">
-                            <button
-                                type="button"
-                                className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                            >
-                                <span className="absolute -inset-1.5" />
-                                <span className="sr-only">
-                                    View notifications
-                                </span>
-                                <UserCircleIcon
-                                    aria-hidden="true"
-                                    className="h-9 w-9"
-                                />
-                            </button>
+                            <NavLink to="/login">
+                                <button
+                                    type="button"
+                                    className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                                >
+                                    <span className="absolute -inset-1.5" />
+                                    <span className="sr-only">
+                                        View notifications
+                                    </span>
+                                    <UserCircleIcon
+                                        aria-hidden="true"
+                                        className="h-9 w-9"
+                                    />
+                                </button>
+                            </NavLink>
                         </div>
                     </div>
                 </div>
