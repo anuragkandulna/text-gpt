@@ -10,28 +10,31 @@ import {
 import { CheckIcon } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../features/user/userSlice";
+import { store } from "../../app/store";
 
 export default function UserRegistration() {
     const [open, setOpen] = useState(true);
 
     // 1. Existing user login steps start here
-    // const [username, setUsername] = useState("");
-    // const [password, setPassword] = useState("");
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("");
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    const [user, setUser] = useState({
-        username: "",
-        password: "",
-        email: "",
-        isAuthenticated: false,
-    });
+    // const [user, setUser] = useState({
+    //     username: "",
+    //     password: "",
+    //     email: "",
+    //     isAuthenticated: false,
+    // });
 
-    // 2. Handle change events in input fields
-    const handleChange = (e) => {
-        setUser({
-            ...user,
-            [e.target.name]: e.target.value,
-        });
-    };
+    // // 2. Handle change events in input fields
+    // const handleChange = (e) => {
+    //     setUser({
+    //         ...user,
+    //         [e.target.name]: e.target.value,
+    //     });
+    // };
 
     // 3. Dispatch user credentials to redux store
     const handleLogin = async (e) => {
@@ -43,6 +46,8 @@ export default function UserRegistration() {
 
         // console.log(`Username: ${username}`);
         // console.log(`Password: ${password}`);
+
+        console.log(store.getState());
 
         // Send request to Login API using Async
         const response = await fetch("http://127.0.0.1:5000/login", {
@@ -63,10 +68,7 @@ export default function UserRegistration() {
         // Based on response give feedback to user and redirect.
         if (response.ok) {
             // Store token in the store: todo
-            setUser({
-                ...user,
-                isAuthenticated: true,
-            });
+            setIsAuthenticated(true);
             console.log("Login successful!");
 
             alert("Login successful!");
@@ -77,7 +79,8 @@ export default function UserRegistration() {
         }
 
         // Dispatch the user payload
-        useDispatch(loginUser(user));
+        useDispatch(loginUser({ username, email, password, isAuthenticated }));
+        console.log(store.getState());
     };
 
     return (
@@ -132,8 +135,12 @@ export default function UserRegistration() {
                                                     id="email"
                                                     name="email"
                                                     type="text"
-                                                    value={user.username}
-                                                    onChange={handleChange}
+                                                    value={username}
+                                                    onChange={(e) =>
+                                                        setUsername(
+                                                            e.target.value
+                                                        )
+                                                    }
                                                     required
                                                     autoComplete="email"
                                                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -163,8 +170,12 @@ export default function UserRegistration() {
                                                     id="password"
                                                     name="password"
                                                     type="password"
-                                                    value={user.password}
-                                                    onChange={handleChange}
+                                                    value={password}
+                                                    onChange={(e) =>
+                                                        setPassword(
+                                                            e.target.value
+                                                        )
+                                                    }
                                                     required
                                                     autoComplete="current-password"
                                                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
