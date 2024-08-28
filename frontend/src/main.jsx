@@ -18,6 +18,8 @@ const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/" element={<Layout />}>
             <Route path="" element={<ProductFeatures />} />
+            <Route path="register" element={<UserRegistration />} />
+            <Route path="login" element={<UserRegistration />} />
         </Route>
     )
 );
