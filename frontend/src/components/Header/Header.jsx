@@ -18,12 +18,12 @@ const user = {
     imageUrl:
         "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
 };
-const navigation = [
-    { name: "Dashboard", href: "#", current: true },
-    { name: "Team", href: "#", current: false },
-    { name: "Projects", href: "#", current: false },
-    { name: "Calendar", href: "#", current: false },
-];
+// const navigation = [
+//     { name: "Dashboard", href: "#", current: true },
+//     { name: "Team", href: "#", current: false },
+//     { name: "Projects", href: "#", current: false },
+//     { name: "Calendar", href: "#", current: false },
+// ];
 const userNavigation = [
     { name: "Your Profile", href: "#" },
     { name: "Settings", href: "#" },
@@ -61,8 +61,13 @@ export default function Navbar() {
                                 src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
                                 className="h-8 w-auto"
                             />
+                            <div className="ml-3">
+                                <p className="text-2xl font-medium text-indigo-500">
+                                    TextGPT
+                                </p>
+                            </div>
                         </div>
-                        <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
+                        {/* <div className="hidden md:ml-6 md:flex md:items-center md:space-x-4">
                             {navigation.map((item) => (
                                 <a
                                     key={item.name}
@@ -80,7 +85,7 @@ export default function Navbar() {
                                     {item.name}
                                 </a>
                             ))}
-                        </div>
+                        </div> */}
                     </div>
                     <div className="flex items-center">
                         <div className="flex-shrink-0">
@@ -162,7 +167,7 @@ export default function Navbar() {
             </div>
 
             <DisclosurePanel className="md:hidden">
-                <div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
+                {/* <div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
                     {navigation.map((item) => (
                         <DisclosureButton
                             key={item.name}
@@ -179,7 +184,7 @@ export default function Navbar() {
                             {item.name}
                         </DisclosureButton>
                     ))}
-                </div>
+                </div> */}
                 <div className="border-t border-gray-700 pb-3 pt-4">
                     <div className="flex items-center px-5 sm:px-6">
                         <div className="flex-shrink-0">
