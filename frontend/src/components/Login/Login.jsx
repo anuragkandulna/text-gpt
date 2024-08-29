@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../features/user/userSlice";
 import { store } from "../../app/store";
 
-export default function UserRegistration() {
+export default function Login() {
     const [open, setOpen] = useState(true);
 
     // 1. Existing user login steps start here
@@ -87,7 +87,7 @@ export default function UserRegistration() {
         <>
             {/*
           This example requires updating your template:
-  
+
           ```
           <html class="h-full bg-white">
           <body class="h-full">
