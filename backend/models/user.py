@@ -5,6 +5,11 @@ User data model.
 import bcrypt
 from datetime import datetime, timezone
 from database import DatabaseConnection as db
+from custom_logger import CustomLogger
+
+
+# Invoke LOGGER
+LOGGER = CustomLogger(__name__, level=20).get_logger()
 
 
 class User:
@@ -41,6 +46,8 @@ class User:
             "role": self.role,
             "is_active": True
         }
+        
+        LOGGER.info(f'Inserting one document into users table: {user_data}')
         return self._get_users_collection.insert_one(user_data)
 
 
@@ -49,9 +56,11 @@ class User:
         """
         Return single document object for username.
         """
-        user = db.get_collection(db_table='users')
-        user_data = user.find_one({"username": username})
+        user_data = cls._get_users_collection().find_one({'username': username})
+        LOGGER.info(f'Queried user data for {username}: {user_data}')
+
         if user_data:
+            
             return cls(
                 username=user_data['username'],
                 email=user_data['email'],
