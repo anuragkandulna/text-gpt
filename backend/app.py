@@ -3,7 +3,7 @@ from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from datetime import datetime, timezone
 from models.custom_logger import CustomLogger 
-from models.user import User as user
+from models.user import User
 
 
 # Defined defaults
@@ -27,7 +27,7 @@ def login():
         username = data.get('username')
         password = data.get('password')
 
-        user_data = user.find_by_username({"username": username})
+        user_data = User.find_by_username(username=username)
         if not user_data:
             LOGGER.info(f'{username} not found in database')
             return jsonify({"message": f"{username} User not found!"}), 404
@@ -60,7 +60,7 @@ def register():
         # Hash the password
         password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
 
-        user.create_new_user(
+        User.create_new_user(
             username=username,
             password_hash=password_hash
         )
