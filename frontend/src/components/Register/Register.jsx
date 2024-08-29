@@ -21,22 +21,7 @@ export default function Register() {
     const [email, setEmail] = useState("");
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    // const [user, setUser] = useState({
-    //     username: "",
-    //     password: "",
-    //     email: "",
-    //     isAuthenticated: false,
-    // });
-
-    // // 2. Handle change events in input fields
-    // const handleChange = (e) => {
-    //     setUser({
-    //         ...user,
-    //         [e.target.name]: e.target.value,
-    //     });
-    // };
-
-    // 3. Dispatch user credentials to redux store
+    // 2. Dispatch user credentials to redux store
     const handleLogin = async (e) => {
         e.preventDefault();
 
