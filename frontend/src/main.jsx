@@ -10,7 +10,8 @@ import {
 } from "react-router-dom";
 import ProductFeatures from "./components/ProductFeatures/ProductFeatures.jsx";
 import Layout from "./Layout.jsx";
-import UserRegistration from "./components/UserRegistration/UserRegistration.jsx";
+import Register from "./components/Register/Register.jsx";
+import Login from "./components/Login/Login.jsx";
 import Card from "./components/Card.jsx";
 import { Provider } from "react-redux";
 import { store } from "./app/store.js";
@@ -20,8 +21,8 @@ const router = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/" element={<Layout />}>
             <Route path="" element={<ProductFeatures />} />
-            <Route path="register" element={<UserRegistration />} />
-            <Route path="login" element={<UserRegistration />} />
+            <Route path="register" element={<Register />} />
+            <Route path="login" element={<Login />} />
         </Route>
     )
 );
