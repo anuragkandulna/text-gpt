@@ -26,7 +26,7 @@ def test():
 
 
 # Authentication route
-@app.route('/login', methods=['POST'])
+@app.route('/api/v1/login', methods=['POST'])
 def login():
     try:
         data = request.json
@@ -49,16 +49,16 @@ def login():
         return jsonify({"message": "An error occurred"}), 500
 
 # Register route (if you need to add new users)
-@app.route('/register', methods=['POST'])
+@app.route('/api/v1/register', methods=['POST'])
 def register():
     try:
         data = request.json
 
         username = data.get('username')
-        email = data.get('email')
+        email = data.get('username')
         password = data.get('password')
-        first_name = data.get('first_name')
-        last_name = data.get('last_name')
+        # first_name = data.get('first_name')
+        # last_name = data.get('last_name')
         created_at = data.get('created_at')
         updated_at = data.get('updated_at')
 
@@ -70,8 +70,8 @@ def register():
             "username": username,
             "email": email,
             "password_hash": password_hash,
-            "first_name": first_name,
-            "last_name": last_name,
+            # "first_name": first_name,
+            # "last_name": last_name,
             "role": "user",
             "is_active": True,
             "created_at": created_at,
