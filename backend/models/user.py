@@ -28,7 +28,7 @@ class User:
 
 
     # @classmethod
-    def create_new_user(self, username, password_hash=None):
+    def create_new_user(self, username, password_hash):
         """
         Create 1 new user in database.
         """
