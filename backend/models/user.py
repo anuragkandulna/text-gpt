@@ -2,7 +2,6 @@
 User data model.
 """
 
-import bcrypt
 from datetime import datetime, timezone
 from database import DatabaseConnection as db
 from custom_logger import CustomLogger
@@ -13,14 +12,14 @@ LOGGER = CustomLogger(__name__, level=20).get_logger()
 
 
 class User:
-    def __init__(self, username, password=None, password_hash=None):
-        self.username = username
-        self.email = username
-        self.password_hash = password_hash or self.hash_password(password=password)
+    def __init__(self):
+        self.username = None
+        self.email = None
+        self.password_hash = None
         self.role = None
         self.is_active = False
-        self.created_at = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S %Z')
-        self.updated_at = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S %Z')
+        self.created_at = 0
+        self.updated_at = 0
 
 
     def _get_users_collection():
@@ -28,15 +27,19 @@ class User:
         return db.get_collection(db_table='users')
 
 
-    @staticmethod
-    def hash_password(password):
-        return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-
-
-    def create_new_user(self):
+    # @classmethod
+    def create_new_user(self, username, password_hash=None):
         """
         Create 1 new user in database.
         """
+        self.username = username
+        self.email = username
+        self.password_hash = password_hash
+        self.role = None
+        self.is_active = True
+        self.created_at = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S %Z')
+        self.updated_at = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S %Z')
+
         user_data = {
             "username": self.username,
             "email": self.email,
@@ -51,20 +54,19 @@ class User:
         return self._get_users_collection.insert_one(user_data)
 
 
-    @classmethod
-    def find_by_username(cls, username):
+    def find_by_username(self, username):
         """
         Return single document object for username.
         """
-        user_data = cls._get_users_collection().find_one({'username': username})
+        user_data = self._get_users_collection().find_one({'username': username})
         LOGGER.info(f'Queried user data for {username}: {user_data}')
 
         if user_data:
-            
-            return cls(
-                username=user_data['username'],
-                email=user_data['email'],
-                password_hash=user_data['password_hash'],
-                is_active=user_data['is_active'],
-            )
+            return {
+                "username": user_data['username'],
+                "email": user_data['email'],
+                "password_hash": user_data['password_hash'],
+                "is_active": user_data['is_active'],
+            }
+
         return None
