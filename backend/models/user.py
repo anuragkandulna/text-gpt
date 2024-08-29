@@ -3,12 +3,13 @@ User data model.
 """
 
 from datetime import datetime, timezone
-from database import DatabaseConnection as db
-from custom_logger import CustomLogger
+from models.database import DatabaseConnection
+from models.custom_logger import CustomLogger
 
 
 # Invoke LOGGER
 LOGGER = CustomLogger(__name__, level=20).get_logger()
+DB_CONN = DatabaseConnection()
 
 
 class User:
@@ -21,44 +22,35 @@ class User:
         self.created_at = 0
         self.updated_at = 0
 
-
+    @staticmethod
     def _get_users_collection():
         """Get users collection."""
-        return db.get_collection(db_table='users')
+        return DB_CONN.get_collection(db_table='users')
 
-
-    # @classmethod
-    def create_new_user(self, username, password_hash):
+    @classmethod
+    def create_new_user(cls, username, password_hash):
         """
         Create 1 new user in database.
         """
-        self.username = username
-        self.email = username
-        self.password_hash = password_hash
-        self.role = None
-        self.is_active = True
-        self.created_at = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S %Z')
-        self.updated_at = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S %Z')
-
         user_data = {
-            "username": self.username,
-            "email": self.email,
-            "password_hash": self.password_hash,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
-            "role": self.role,
-            "is_active": True
+            "username": username,
+            "email": username,
+            "password_hash": password_hash,
+            "role": None,
+            "is_active": True,
+            "created_at": datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S %Z'),
+            "updated_at": datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S %Z')
         }
         
         LOGGER.info(f'Inserting one document into users table: {user_data}')
-        return self._get_users_collection.insert_one(user_data)
+        return cls._get_users_collection().insert_one(user_data)
 
-
-    def find_by_username(self, username):
+    @classmethod
+    def find_by_username(cls, username):
         """
         Return single document object for username.
         """
-        user_data = self._get_users_collection().find_one({'username': username})
+        user_data = cls._get_users_collection().find_one({'username': username})
         LOGGER.info(f'Queried user data for {username}: {user_data}')
 
         if user_data:
@@ -70,3 +62,4 @@ class User:
             }
 
         return None
+    
