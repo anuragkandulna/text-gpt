@@ -2,11 +2,11 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialUser = {
     username: "user123",
-    email: "user123@email.com",
     password: "password_hash",
     cpassword: "cpassword_hash",
+    token: "token",
     isAuthenticated: false,
-    isNewUser: false,
+    isNewUser: true,
 };
 
 export const userSlice = createSlice({
@@ -18,19 +18,25 @@ export const userSlice = createSlice({
         loginUser: (state, action) => {
             // Deploy the payload from user into the store
             state.username = action.payload.username;
-            state.email = action.payload.email;
             state.password = action.payload.password;
             state.isAuthenticated = action.payload.isAuthenticated;
-            state.isNewUser = action = action.payload.isNewUser;
+            state.isNewUser = false;
+            state.token = action.payload.token;
         },
 
         // 2. Create a new user.
-        registerUser,
+        registerUser: (state, action) => {
+            state.username = action.payload.username;
+            state.password = action.payload.password;
+            state.isAuthenticated = action.payload.isAuthenticated;
+            state.isNewUser = true;
+            state.token = action.payload.token;
+        },
     },
 });
 
 // 2. Export all reducers individually
-export const { loginUser } = userSlice.actions;
+export const { loginUser, registerUser } = userSlice.actions;
 
 // 3. Register the reducer to store so that the store is aware of reducers accessing the data
 export default userSlice.reducer;
