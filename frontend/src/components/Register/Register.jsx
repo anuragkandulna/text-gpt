@@ -18,7 +18,8 @@ export default function Register() {
     // 1. Existing user login steps start here
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [email, setEmail] = useState("");
+    const [cpassword, setCPassword] = useState("");
+    // const [email, setEmail] = useState("");
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     // 2. Dispatch user credentials to redux store
@@ -32,10 +33,10 @@ export default function Register() {
         // console.log(`Username: ${username}`);
         // console.log(`Password: ${password}`);
 
-        console.log(store.getState());
+        // console.log(store.getState());
 
         // Send request to Login API using Async
-        const response = await fetch("http://127.0.0.1:5000/login", {
+        const response = await fetch("http://127.0.0.1:5000/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -168,7 +169,7 @@ export default function Register() {
                                             </div>
                                         </div>
 
-                                        {/* <div>
+                                        <div>
                                             <div className="flex items-center justify-between">
                                                 <label
                                                     htmlFor="password"
@@ -187,7 +188,7 @@ export default function Register() {
                                                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                                                 />
                                             </div>
-                                        </div> */}
+                                        </div>
 
                                         <div>
                                             <button
