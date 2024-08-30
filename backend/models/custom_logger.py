@@ -6,7 +6,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 class CustomLogger:
-    def __init__(self, name=__name__, level=logging.DEBUG, log_file='parser_application.log', max_bytes=2000, backup_count=5):
+    def __init__(self, name=__name__, level=logging.DEBUG, log_file='parser_application.log', max_bytes=500000, backup_count=5):
         self.logger = logging.getLogger(name)
         self.logger.setLevel(level)
 
