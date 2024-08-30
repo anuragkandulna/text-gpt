@@ -215,3 +215,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Compressed logs
+*.log.*
