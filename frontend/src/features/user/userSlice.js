@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialUser = {
+const initialState = {
     username: "user123",
     password: "password_hash",
     cpassword: "cpassword_hash",
@@ -11,7 +11,7 @@ const initialUser = {
 
 export const userSlice = createSlice({
     name: "user",
-    initialUser,
+    initialState,
     // LIST OF ALL REDUCERS
     reducers: {
         // 1. Authenticate an existing user.
@@ -32,11 +32,16 @@ export const userSlice = createSlice({
             state.isNewUser = true;
             state.token = action.payload.token;
         },
+
+        // 3. Reset User state or logging out
+        resetUser: (state) => {
+            Object.assign(state, initialState);
+        },
     },
 });
 
 // 2. Export all reducers individually
-export const { loginUser, registerUser } = userSlice.actions;
+export const { loginUser, registerUser, resetUser } = userSlice.actions;
 
 // 3. Register the reducer to store so that the store is aware of reducers accessing the data
 export default userSlice.reducer;
