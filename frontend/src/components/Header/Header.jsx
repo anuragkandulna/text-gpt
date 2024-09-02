@@ -16,6 +16,8 @@ import {
 import { PlusIcon } from "@heroicons/react/20/solid";
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
+import { store } from "../../app/store";
+import { useDispatch, useSelector } from "react-redux";
 
 const isAuthenticated = false;
 const user = {
@@ -41,6 +43,9 @@ function classNames(...classes) {
 }
 
 export default function Navbar() {
+    const value_from_store = useSelector((state) => state.user.isAuthenticated);
+    const dispatch = useDispatch();
+
     return (
         <Disclosure as="nav" className="bg-gray-800">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -62,21 +67,21 @@ export default function Navbar() {
                     </div>
                     <div className="flex items-center">
                         <div className="md:ml-4 md:flex md:flex-shrink-0 md:items-center">
-                            <NavLink to="/login">
-                                <button
-                                    type="button"
-                                    className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                                >
-                                    <span className="absolute -inset-1.5" />
-                                    <span className="sr-only">
-                                        View notifications
-                                    </span>
-                                    <UserCircleIcon
-                                        aria-hidden="true"
-                                        className="h-9 w-9"
-                                    />
-                                </button>
-                            </NavLink>
+                            {/* <Navigate to="/login"> */}
+                            <button
+                                type="button"
+                                className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                            >
+                                <span className="absolute -inset-1.5" />
+                                <span className="sr-only">
+                                    View notifications
+                                </span>
+                                <UserCircleIcon
+                                    aria-hidden="true"
+                                    className="h-9 w-9"
+                                />
+                            </button>
+                            {/* </Navigate> */}
                         </div>
                     </div>
                 </div>
