@@ -14,8 +14,8 @@ import {
     UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import { PlusIcon } from "@heroicons/react/20/solid";
-import React from "react";
-import { Link, NavLink } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { store } from "../../app/store";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -43,8 +43,24 @@ function classNames(...classes) {
 }
 
 export default function Navbar() {
-    const value_from_store = useSelector((state) => state.user.isAuthenticated);
+    const navigate = useNavigate();
+    // const { isAuthenticated } = useSelector((state) => state.user);
+    const { isAuthenticated, isNewUser } = useSelector((state) => state.user);
     const dispatch = useDispatch();
+
+    // 1. Check if user is authenticated when page loads display correct page.
+    useEffect(() => {
+        if (isAuthenticated) {
+            console.log(
+                `User is already authenticated.... ${isAuthenticated} Navigate to Dashboard`
+            );
+            navigate("/dashboard");
+            // navigate("");
+        } else {
+            console.log(`user is not authenticated... ${isAuthenticated}`);
+            navigate("/");
+        }
+    }, [isAuthenticated, navigate]);
 
     return (
         <Disclosure as="nav" className="bg-gray-800">
