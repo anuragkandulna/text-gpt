@@ -1,6 +1,6 @@
 import React from "react";
-import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
     Dialog,
     DialogBackdrop,
@@ -9,41 +9,47 @@ import {
 } from "@headlessui/react";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../../features/user/userSlice";
+import { loginUser, registerUser } from "../../features/user/userSlice";
 import { store } from "../../app/store";
+import { COMPANY_LOGO } from "../../constants/companyConstants";
 
 export default function Register() {
+    // 1. State variable to display <Dialog> or not.
     const [open, setOpen] = useState(true);
 
-    // 1. Existing user login steps start here
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [cpassword, setCPassword] = useState("");
-    // const [email, setEmail] = useState("");
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    // 2. Local username and password variables
+    const [localUsername, setLocalUsername] = useState("");
+    const [localPassword, setLocalPassword] = useState("");
+    const [localCPassword, setLocalCPassword] = useState("");
 
-    // 2. Dispatch user credentials to redux store
-    const handleLogin = async (e) => {
+    // 3. Get isAuthenticated state from the store
+    const { isAuthenticated } = useSelector((state) => state.user);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    // 4. If login tab is closed the redirect to home
+    useEffect(() => {
+        if (!open) {
+            console.log(
+                "register page was closed abruptly so go back to home."
+            );
+            navigate("/");
+        }
+    });
+
+    // 5. Dispatch user credentials to redux store upon successful login attempt
+    const handleRegister = async (e) => {
         e.preventDefault();
 
-        // Dispatch username and password here: do this later
-        // useDispatch();
-        // setUsername("user111");
-
-        // console.log(`Username: ${username}`);
-        // console.log(`Password: ${password}`);
-
-        // console.log(store.getState());
-
         // Send request to Login API using Async
-        const response = await fetch("http://127.0.0.1:5000/register", {
+        const response = await fetch("http://127.0.0.1:5000/api/v1/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                username,
-                password,
+                username: localUsername,
+                password: localPassword,
             }),
         });
 
@@ -51,22 +57,21 @@ export default function Register() {
         const data = await response.json();
         console.log(`Login API response data: ${data}`);
 
-        // Based on response give feedback to user and redirect.
+        // If response = ok, then redirect to dashboard.
         if (response.ok) {
             // Store token in the store: todo
-            setIsAuthenticated(true);
-            console.log("Login successful!");
-
-            alert("Login successful!");
+            dispatch(
+                registerUser({
+                    username: localUsername,
+                    password: localPassword,
+                    isAuthenticated: true,
+                })
+            );
+            alert("User registration successful!");
+            navigate("/dashboard");
         } else {
-            console.error("Login Failed!!!");
-
-            alert("Login Failed!!!");
+            alert("Registration Failed!!!");
         }
-
-        // Dispatch the user payload
-        useDispatch(loginUser({ username, email, password, isAuthenticated }));
-        console.log(store.getState());
     };
 
     return (
@@ -96,17 +101,17 @@ export default function Register() {
                                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                                     <img
                                         alt="Your Company"
-                                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                                        src={COMPANY_LOGO}
                                         className="mx-auto h-10 w-auto"
                                     />
                                     <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                                        Sign in to your account
+                                        Register as new user
                                     </h2>
                                 </div>
 
                                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                                     <form
-                                        onSubmit={handleLogin}
+                                        onSubmit={handleRegister}
                                         className="space-y-6"
                                     >
                                         <div>
@@ -121,9 +126,9 @@ export default function Register() {
                                                     id="email"
                                                     name="email"
                                                     type="text"
-                                                    value={username}
+                                                    value={localUsername}
                                                     onChange={(e) =>
-                                                        setUsername(
+                                                        setLocalUsername(
                                                             e.target.value
                                                         )
                                                     }
@@ -142,23 +147,15 @@ export default function Register() {
                                                 >
                                                     Password
                                                 </label>
-                                                <div className="text-sm">
-                                                    <a
-                                                        href="#"
-                                                        className="font-semibold text-indigo-600 hover:text-indigo-500"
-                                                    >
-                                                        Forgot password?
-                                                    </a>
-                                                </div>
                                             </div>
                                             <div className="mt-2">
                                                 <input
                                                     id="password"
                                                     name="password"
                                                     type="password"
-                                                    value={password}
+                                                    value={localPassword}
                                                     onChange={(e) =>
-                                                        setPassword(
+                                                        setLocalPassword(
                                                             e.target.value
                                                         )
                                                     }
@@ -180,9 +177,15 @@ export default function Register() {
                                             </div>
                                             <div className="mt-2">
                                                 <input
-                                                    id="password"
-                                                    name="password"
+                                                    id="cpassword"
+                                                    name="cpassword"
                                                     type="password"
+                                                    value={localCPassword}
+                                                    onChange={(e) =>
+                                                        setLocalCPassword(
+                                                            e.target.value
+                                                        )
+                                                    }
                                                     required
                                                     autoComplete="current-password"
                                                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
@@ -195,19 +198,19 @@ export default function Register() {
                                                 type="submit"
                                                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                             >
-                                                Sign in
+                                                Register
                                             </button>
                                         </div>
                                     </form>
 
                                     <p className="mt-10 text-center text-sm text-gray-500">
-                                        Not a member?{" "}
-                                        <a
-                                            href="#"
+                                        Existing member?{" "}
+                                        <Link
+                                            to="/login"
                                             className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
                                         >
-                                            Register Now
-                                        </a>
+                                            Login here
+                                        </Link>
                                     </p>
                                 </div>
                             </div>
