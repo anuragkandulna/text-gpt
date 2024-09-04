@@ -198,9 +198,3 @@ export default function Login() {
         </>
     );
 }
-
-{
-    /*
-    Default <form> values.
-    <form action="#" method="POST" className="space-y-6"></form>; */
-}
