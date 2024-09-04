@@ -11,6 +11,7 @@ import { CheckIcon } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../features/user/userSlice";
 import { store } from "../../app/store";
+import { COMPANY_LOGO } from "../../constants/companyConstants";
 
 export default function Login() {
     // 1. State variable to display <Dialog> or not.
@@ -38,7 +39,7 @@ export default function Login() {
         e.preventDefault();
 
         // Send request to Login API using Async
-        const response = await fetch("http://127.0.0.1:5000/login", {
+        const response = await fetch("http://127.0.0.1:5000/api/v1/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -97,7 +98,7 @@ export default function Login() {
                                 <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                                     <img
                                         alt="Your Company"
-                                        src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+                                        src={COMPANY_LOGO}
                                         className="mx-auto h-10 w-auto"
                                     />
                                     <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
