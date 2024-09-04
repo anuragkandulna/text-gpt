@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -25,7 +25,15 @@ export default function Login() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    // 4. Dispatch user credentials to redux store upon successful login attempt
+    // 4. If login tab is closed the redirect to home
+    useEffect(() => {
+        if (!open) {
+            console.log("login page was closed abruptly so go back to home.");
+            navigate("/");
+        }
+    });
+
+    // 5. Dispatch user credentials to redux store upon successful login attempt
     const handleLogin = async (e) => {
         e.preventDefault();
 
