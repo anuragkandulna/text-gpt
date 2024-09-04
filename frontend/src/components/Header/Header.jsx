@@ -40,21 +40,22 @@ export default function Navbar() {
 
     return (
         <Disclosure as="nav" className="bg-gray-800">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 min-h-16">
                 <div className="flex h-16 justify-between">
                     <div className="flex">
-                        <div className="-ml-2 mr-2 flex items-center md:hidden"></div>
                         <div className="flex flex-shrink-0 items-center">
-                            <img
-                                alt="Your Company"
-                                src={COMPANY_URL}
-                                className="h-8 w-auto"
-                            />
-                            <div className="ml-3">
-                                <p className="text-2xl font-medium text-indigo-500">
-                                    {COMPANY_NAME}
-                                </p>
-                            </div>
+                            <Link to="/" className="flex items-center">
+                                <img
+                                    alt="Your Company"
+                                    src={COMPANY_URL}
+                                    className="h-8 w-auto"
+                                />
+                                <div className="ml-3">
+                                    <p className="text-2xl font-medium text-indigo-500">
+                                        {COMPANY_NAME}
+                                    </p>
+                                </div>
+                            </Link>
                         </div>
                     </div>
                     <div className="flex items-center">
