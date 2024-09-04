@@ -19,7 +19,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { store } from "../../app/store";
 import { useDispatch, useSelector } from "react-redux";
 import ProfileMenu from "../ProfileMenu/ProfileMenu";
-import { COMPANY_URL, COMPANY_NAME } from "../../constants/companyConstants";
+import { COMPANY_LOGO, COMPANY_NAME } from "../../constants/companyConstants";
 
 export default function Navbar() {
     // 1. Get isAuthenticated state from the store
@@ -47,7 +47,7 @@ export default function Navbar() {
                             <Link to="/" className="flex items-center">
                                 <img
                                     alt="Your Company"
-                                    src={COMPANY_URL}
+                                    src={COMPANY_LOGO}
                                     className="h-8 w-auto"
                                 />
                                 <div className="ml-3">
