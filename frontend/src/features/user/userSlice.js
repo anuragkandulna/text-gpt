@@ -34,14 +34,14 @@ export const userSlice = createSlice({
         },
 
         // 3. Reset User state or logging out
-        resetUser: (state) => {
+        logoutUser: (state) => {
             Object.assign(state, initialState);
         },
     },
 });
 
 // 2. Export all reducers individually
-export const { loginUser, registerUser, resetUser } = userSlice.actions;
+export const { loginUser, registerUser, logoutUser } = userSlice.actions;
 
 // 3. Register the reducer to store so that the store is aware of reducers accessing the data
 export default userSlice.reducer;
