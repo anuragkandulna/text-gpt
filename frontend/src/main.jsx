@@ -13,7 +13,6 @@ import Layout from "./Layout.jsx";
 import Register from "./components/Register/Register.jsx";
 import Login from "./components/Login/Login.jsx";
 import Card from "./components/Card.jsx";
-import YTSearch from "./components/YTSearch.jsx";
 import { Provider } from "react-redux";
 import { store } from "./app/store.js";
 // import ProtectedRoute from "./Routes/ProtectedRoute.js";
