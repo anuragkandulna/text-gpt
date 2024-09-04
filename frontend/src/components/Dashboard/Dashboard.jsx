@@ -43,6 +43,7 @@ export default function Example() {
         <body class="h-full">
         ```
       */}
+            {/* LINK SEARCH */}
             <div className="overflow-hidden rounded-lg bg-white shadow items-center">
                 <div className="px-4 py-5 sm:p-6">
                     {/* Content goes here */}
@@ -73,6 +74,20 @@ export default function Example() {
                             </button>
                         </div>
                     </form>
+                </div>
+            </div>
+
+            {/* AUDIO PLAYER */}
+            <div className="overflow-hidden rounded-lg bg-white shadow">
+                <div className="px-4 py-5 sm:p-6">
+                    {/* Audio Player */}
+                    <audio controls className="w-full">
+                        <source
+                            src="https://www.youtube.com/watch?v=EUeryhp8HSQ"
+                            type="audio/mpeg"
+                        />
+                        Your browser does not support the audio element.
+                    </audio>
                 </div>
             </div>
         </>
