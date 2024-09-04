@@ -16,6 +16,7 @@ import Card from "./components/Card.jsx";
 import YTSearch from "./components/YTSearch.jsx";
 import { Provider } from "react-redux";
 import { store } from "./app/store.js";
+import ProtectedRoute from "./Routes/ProtectedRoute.js";
 
 // All the public routes down here:
 const router = createBrowserRouter(
@@ -24,7 +25,6 @@ const router = createBrowserRouter(
             <Route path="" element={<ProductFeatures />} />
             <Route path="register" element={<Register />} />
             <Route path="login" element={<Login />} />
-            <Route path="dashboard" element={<YTSearch />} />
         </Route>
     )
 );
