@@ -2,8 +2,12 @@ import React from "react";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import { Outlet } from "react-router-dom";
+import { useSelector } from "react-redux";
+import YTSearch from "./components/YTSearch";
 
 function Layout() {
+    const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
+
     return (
         <>
             <div className="flex flex-col min-h-screen">
