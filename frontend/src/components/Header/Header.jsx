@@ -19,6 +19,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { store } from "../../app/store";
 import { useDispatch, useSelector } from "react-redux";
 import ProfileMenu from "../ProfileMenu/ProfileMenu";
+import { COMPANY_URL, COMPANY_NAME } from "../../constants/companyConstants";
 
 export default function Navbar() {
     // 1. Get isAuthenticated state from the store
@@ -46,12 +47,12 @@ export default function Navbar() {
                         <div className="flex flex-shrink-0 items-center">
                             <img
                                 alt="Your Company"
-                                src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                                src={COMPANY_URL}
                                 className="h-8 w-auto"
                             />
                             <div className="ml-3">
                                 <p className="text-2xl font-medium text-indigo-500">
-                                    TextGPT
+                                    {COMPANY_NAME}
                                 </p>
                             </div>
                         </div>
