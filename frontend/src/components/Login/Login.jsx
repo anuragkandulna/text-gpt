@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
     Dialog,
     DialogBackdrop,
@@ -13,41 +13,21 @@ import { loginUser } from "../../features/user/userSlice";
 import { store } from "../../app/store";
 
 export default function Login() {
+    // 1. State variable to display <Dialog> or not.
     const [open, setOpen] = useState(true);
 
-    // 1. Existing user login steps start here
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [email, setEmail] = useState("");
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    // 2. Local username and password variables
+    const [localUsername, setLocalUsername] = useState("");
+    const [localPassword, setLocalPassword] = useState("");
 
-    // const [user, setUser] = useState({
-    //     username: "",
-    //     password: "",
-    //     email: "",
-    //     isAuthenticated: false,
-    // });
+    // 3. Get isAuthenticated state from the store
+    const { isAuthenticated } = useSelector((state) => state.user);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    // // 2. Handle change events in input fields
-    // const handleChange = (e) => {
-    //     setUser({
-    //         ...user,
-    //         [e.target.name]: e.target.value,
-    //     });
-    // };
-
-    // 3. Dispatch user credentials to redux store
+    // 4. Dispatch user credentials to redux store upon successful login attempt
     const handleLogin = async (e) => {
         e.preventDefault();
-
-        // Dispatch username and password here: do this later
-        // useDispatch();
-        // setUsername("user111");
-
-        // console.log(`Username: ${username}`);
-        // console.log(`Password: ${password}`);
-
-        console.log(store.getState());
 
         // Send request to Login API using Async
         const response = await fetch("http://127.0.0.1:5000/login", {
@@ -56,8 +36,8 @@ export default function Login() {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                username,
-                password,
+                username: localUsername,
+                password: localPassword,
             }),
         });
 
@@ -65,22 +45,21 @@ export default function Login() {
         const data = await response.json();
         console.log(`Login API response data: ${data}`);
 
-        // Based on response give feedback to user and redirect.
+        // If response = ok, then redirect to dashboard.
         if (response.ok) {
             // Store token in the store: todo
-            setIsAuthenticated(true);
-            console.log("Login successful!");
-
+            dispatch(
+                loginUser({
+                    username: localUsername,
+                    password: localPassword,
+                    isAuthenticated: true,
+                })
+            );
             alert("Login successful!");
+            navigate("/dashboard");
         } else {
-            console.error("Login Failed!!!");
-
             alert("Login Failed!!!");
         }
-
-        // Dispatch the user payload
-        useDispatch(loginUser({ username, email, password, isAuthenticated }));
-        console.log(store.getState());
     };
 
     return (
@@ -135,9 +114,9 @@ export default function Login() {
                                                     id="email"
                                                     name="email"
                                                     type="text"
-                                                    value={username}
+                                                    value={localUsername}
                                                     onChange={(e) =>
-                                                        setUsername(
+                                                        setLocalUsername(
                                                             e.target.value
                                                         )
                                                     }
@@ -170,9 +149,9 @@ export default function Login() {
                                                     id="password"
                                                     name="password"
                                                     type="password"
-                                                    value={password}
+                                                    value={localPassword}
                                                     onChange={(e) =>
-                                                        setPassword(
+                                                        setLocalPassword(
                                                             e.target.value
                                                         )
                                                     }
@@ -182,27 +161,6 @@ export default function Login() {
                                                 />
                                             </div>
                                         </div>
-
-                                        {/* <div>
-                                            <div className="flex items-center justify-between">
-                                                <label
-                                                    htmlFor="password"
-                                                    className="block text-sm font-medium leading-6 text-gray-900"
-                                                >
-                                                    Re-type Password
-                                                </label>
-                                            </div>
-                                            <div className="mt-2">
-                                                <input
-                                                    id="password"
-                                                    name="password"
-                                                    type="password"
-                                                    required
-                                                    autoComplete="current-password"
-                                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                                                />
-                                            </div>
-                                        </div> */}
 
                                         <div>
                                             <button
@@ -216,12 +174,12 @@ export default function Login() {
 
                                     <p className="mt-10 text-center text-sm text-gray-500">
                                         Not a member?{" "}
-                                        <a
-                                            href="#"
+                                        <Link
+                                            to="/register"
                                             className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
                                         >
                                             Register Now
-                                        </a>
+                                        </Link>
                                     </p>
                                 </div>
                             </div>
