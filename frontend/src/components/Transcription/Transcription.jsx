@@ -49,29 +49,33 @@ export default function Transcription() {
             <div className="px-4 py-5 sm:px-6">
                 {/* Content goes here */}
                 {/* We use less vertical padding on card headers on desktop than on body sections */}
-
                 <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900 text-center">
-                    Write me up!
+                    Transcripted Audio
                 </h1>
                 <p className="mt-3 text-md text-center">
-                    Transcribe, Translate & Summarize any video!
+                    Playback audio and verify the transcription.
                 </p>
-
-                <h3 className="text-lg font-medium leading-6 text-gray-900">
-                    Audio Title
-                </h3>
-                <p className="mt-1 text-sm text-gray-500">
-                    This is a description of the audio content.
-                </p>
-                <audio controls className="w-full mt-4">
-                    <source
-                        src="path-to-your-audio-file.mp3"
-                        type="audio/mpeg"
-                    />
-                    Your browser does not support the audio element.
-                </audio>
             </div>
             <div className="min-h-[50vh] flex flex-col bg-gray-50  px-4 py-5 sm:p-6">
+                {/* PLAYBACK AUDIO */}
+                <div className="overflow-hidden rounded-lg bg-gray-200">
+                    <div className="px-4 py-5 sm:p-6">
+                        <h3 className="text-lg font-medium leading-6 text-gray-900">
+                            Audio Title
+                        </h3>
+                        <p className="mt-1 text-sm text-gray-500">
+                            This is a description of the audio content.
+                        </p>
+                        <audio controls className="w-full mt-4">
+                            <source
+                                src="path-to-your-audio-file.mp3"
+                                type="audio/mpeg"
+                            />
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
+                </div>
+
                 {/* TRANSCRIPTION TEXT */}
 
                 <form action="#" className="relative">
