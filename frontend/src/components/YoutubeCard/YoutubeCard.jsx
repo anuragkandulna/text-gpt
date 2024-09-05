@@ -39,7 +39,7 @@ export default function YoutubeCard() {
                         </div>
                     </form>
                     <fieldset className="text-center mt-4">
-                        <legend className="text-sm font-semibold leading-6 text-gray-900 -indent-24">
+                        <legend className="text-md font-semibold leading-6 text-gray-900 -indent-16">
                             Maximum length of each segment?
                         </legend>
                         {/* <p className="mt-1 text-sm leading-6 text-gray-600">
@@ -68,6 +68,27 @@ export default function YoutubeCard() {
                                     </label>
                                 </div>
                             ))}
+                        </div>
+                    </fieldset>
+
+                    <fieldset className="flex text-center mt-4 sm:items-center justify-center">
+                        <legend className="text-md font-semibold leading-6 text-gray-900 -indent-36">
+                            Source video language:
+                        </legend>
+                        {/* <p className="mt-1 text-sm leading-6 text-gray-600">
+                            How do you prefer to receive notifications?
+                        </p> */}
+                        <div className="w-full mt-2 sm:max-w-xs flex ">
+                            <select
+                                id="country"
+                                name="country"
+                                autoComplete="country-name"
+                                className="relative block w-full rounded-none rounded-t-md border-0 bg-transparent py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            >
+                                <option>United States</option>
+                                <option>Canada</option>
+                                <option>Mexico</option>
+                            </select>
                         </div>
                     </fieldset>
                 </div>
