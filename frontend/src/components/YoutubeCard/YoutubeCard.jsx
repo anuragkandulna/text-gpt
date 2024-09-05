@@ -1,25 +1,33 @@
 import React from "react";
 
-const notificationMethods = [
+const videoSegmentLengths = [
     { id: "len30", title: "30 secs" },
     { id: "len60", title: "60 secs" },
     { id: "len120", title: "120 secs" },
+];
+
+const sourceVideoLanguages = [
+    { id: "en-IN", language: "English (India)" },
+    { id: "hi-IN", language: "Hindi (India)" },
+    { id: "bn-IN", language: "Bengali (India)" },
+    { id: "en-US", language: "English (United States)" },
+    { id: "en-UK", language: "English (United Kingdom)" },
 ];
 
 export default function YoutubeCard() {
     return (
         <>
             <div className="overflow-hidden rounded-lg bg-white shadow">
-                <div className="px-4 py-5 sm:p-6">
+                <div className="px-4 py-5 sm:p-12">
                     {/* Header goes here */}
                     <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900 text-center">
                         Write me up!
                     </h1>
-                    <div className="text-md text-center">
+                    <p className="mt-3 text-md text-center">
                         Transcribe, Translate & Summarize any video!
-                    </div>
+                    </p>
                 </div>
-                <div className="bg-gray-50 px-4 py-5 sm:p-6">
+                <div className="min-h-[50vh] flex flex-col bg-gray-50 px-4 py-5 sm:p-6">
                     {/* Content goes here */}
 
                     <form className="sm:flex sm:items-center justify-center">
@@ -50,25 +58,25 @@ export default function YoutubeCard() {
                             How do you prefer to receive notifications?
                         </p> */}
                         <div className="mt-2 space-y-6 sm:flex sm:items-center sm:space-x-10 sm:space-y-0 justify-center">
-                            {notificationMethods.map((notificationMethod) => (
+                            {videoSegmentLengths.map((videoSegment) => (
                                 <div
-                                    key={notificationMethod.id}
+                                    key={videoSegment.id}
                                     className="flex items-center"
                                 >
                                     <input
                                         defaultChecked={
-                                            notificationMethod.id === "len60"
+                                            videoSegment.id === "len60"
                                         }
-                                        id={notificationMethod.id}
+                                        id={videoSegment.id}
                                         name="notification-method"
                                         type="radio"
                                         className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
                                     />
                                     <label
-                                        htmlFor={notificationMethod.id}
+                                        htmlFor={videoSegment.id}
                                         className="ml-3 block text-sm font-medium leading-6 text-gray-900"
                                     >
-                                        {notificationMethod.title}
+                                        {videoSegment.title}
                                     </label>
                                 </div>
                             ))}
@@ -84,14 +92,19 @@ export default function YoutubeCard() {
                         </p> */}
                         <div className="w-full mt-2 sm:max-w-xs flex ">
                             <select
-                                id="country"
-                                name="country"
+                                id="sourceVideoLanguage"
+                                name="sourceVideoLanguage"
                                 autoComplete="country-name"
                                 className="relative block w-full rounded-md border-0 bg-transparent py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             >
-                                <option>United States</option>
+                                {sourceVideoLanguages.map((videoLanguage) => (
+                                    <option key={videoLanguage.id}>
+                                        {videoLanguage.language}
+                                    </option>
+                                ))}
+                                {/* <option>United States</option>
                                 <option>Canada</option>
-                                <option>Mexico</option>
+                                <option>Mexico</option> */}
                             </select>
                         </div>
                     </fieldset>
