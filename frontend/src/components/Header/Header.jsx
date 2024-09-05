@@ -44,7 +44,10 @@ export default function Navbar() {
                 <div className="flex h-16 justify-between">
                     <div className="flex">
                         <div className="flex flex-shrink-0 items-center">
-                            <Link to="/" className="flex items-center">
+                            <Link
+                                to={isAuthenticated ? "/dashboard" : "/"}
+                                className="flex items-center"
+                            >
                                 <img
                                     alt="Your Company"
                                     src={COMPANY_LOGO}
