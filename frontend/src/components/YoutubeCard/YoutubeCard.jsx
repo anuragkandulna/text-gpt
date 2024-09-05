@@ -11,14 +11,18 @@ export default function YoutubeCard() {
         <>
             <div className="overflow-hidden rounded-lg bg-white shadow">
                 <div className="px-4 py-5 sm:p-6">
-                    {/* Content goes here */}
+                    {/* Header goes here */}
                     <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900 text-center">
                         Write me up!
                     </h1>
                     <div className="text-md text-center">
                         Transcribe, Translate & Summarize any video!
                     </div>
-                    <form className="mt-5 sm:flex sm:items-center justify-center">
+                </div>
+                <div className="bg-gray-50 px-4 py-5 sm:p-6">
+                    {/* Content goes here */}
+
+                    <form className="sm:flex sm:items-center justify-center">
                         <div className="w-full sm:max-w-xs flex">
                             <label htmlFor="email" className="sr-only">
                                 Email
