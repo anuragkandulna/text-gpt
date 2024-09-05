@@ -16,10 +16,25 @@ export default function Example() {
                 <p className="mt-3 text-md text-center">
                     Transcribe, Translate & Summarize any video!
                 </p>
+
+                <h3 className="text-lg font-medium leading-6 text-gray-900">
+                    Audio Title
+                </h3>
+                <p className="mt-1 text-sm text-gray-500">
+                    This is a description of the audio content.
+                </p>
+                <audio controls className="w-full mt-4">
+                    <source
+                        src="path-to-your-audio-file.mp3"
+                        type="audio/mpeg"
+                    />
+                    Your browser does not support the audio element.
+                </audio>
             </div>
             <div className="min-h-[50vh] flex flex-col bg-gray-50  px-4 py-5 sm:p-6">
                 {/* Content goes here */}
 
+                {/* BOTTOM NAVIGATION */}
                 <nav className="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0">
                     <div className="-mt-px flex w-0 flex-1">
                         <a
