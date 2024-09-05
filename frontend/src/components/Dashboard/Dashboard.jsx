@@ -9,6 +9,7 @@ import {
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import YoutubeCard from "../YoutubeCard/YoutubeCard";
+import Transcription from "../Transcription/Transcription";
 
 const user = {
     name: "Tom Cook",
@@ -44,7 +45,8 @@ export default function Dashboard() {
         <body class="h-full">
         ```
       */}
-            <YoutubeCard />
+            {/* <YoutubeCard /> */}
+            <Transcription />
         </>
     );
 }
