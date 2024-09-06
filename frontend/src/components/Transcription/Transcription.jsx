@@ -97,8 +97,8 @@ export default function Transcription() {
                                     className={classNames(
                                         team.name === selectedTeam
                                             ? "border-white text-indigo-600"
-                                            : "border-gray-400 text-gray-800 group-hover:border-white group-hover:text-white",
-                                        "flex h-full w-full items-center justify-center rounded-full border bg-white text-[1rem] font-bold"
+                                            : "border-gray-400 text-gray-800 group-hover:border-white group-hover:text-indigo-600",
+                                        "flex h-full w-full items-center justify-center rounded-full border bg-white text-[0.75rem] font-bold transition-colors duration-150"
                                     )}
                                 >
                                     {team.initial}
