@@ -7,6 +7,7 @@ import {
     TagIcon,
     UserCircleIcon,
 } from "@heroicons/react/20/solid";
+import { Radio, RadioGroup } from "@headlessui/react";
 
 import {
     Label,
@@ -36,6 +37,14 @@ const dueDates = [
     // More items...
 ];
 
+const options = [
+    { name: "Pink", color: "text-pink-500" },
+    { name: "Purple", color: "text-purple-500" },
+    { name: "Blue", color: "text-blue-500" },
+    { name: "Green", color: "text-green-500" },
+    { name: "Yellow", color: "text-yellow-500" },
+];
+
 function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
 }
@@ -44,6 +53,7 @@ export default function Transcription() {
     const [assigned, setAssigned] = useState(assignees[0]);
     const [labelled, setLabelled] = useState(labels[0]);
     const [dated, setDated] = useState(dueDates[0]);
+    const [selectedColor, setSelectedColor] = useState(options[1]);
     return (
         <div className="divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow">
             <div className="px-4 py-5 sm:px-6">
@@ -55,6 +65,32 @@ export default function Transcription() {
                 <p className="mt-3 text-md text-center">
                     Playback audio and verify the transcription.
                 </p>
+                <fieldset>
+                    <div className="w-full flex justify-center">
+                        <RadioGroup
+                            value={selectedColor}
+                            onChange={setSelectedColor}
+                            className="mt-6 flex items-center space-x-3"
+                        >
+                            {options.map((option) => (
+                                <Radio
+                                    key={option.name}
+                                    value={option}
+                                    aria-label={option.name}
+                                    className={classNames(
+                                        option.color,
+                                        "relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 ring-current focus:outline-none data-[checked]:ring-2 data-[focus]:data-[checked]:ring data-[focus]:data-[checked]:ring-offset-1"
+                                    )}
+                                >
+                                    <span
+                                        aria-hidden="true"
+                                        className="h-8 w-8 rounded-full border border-black border-opacity-10 bg-current"
+                                    />
+                                </Radio>
+                            ))}
+                        </RadioGroup>
+                    </div>
+                </fieldset>
             </div>
             <div className="min-h-[50vh] flex flex-col bg-gray-50  px-4 py-5 sm:p-6">
                 {/* PLAYBACK AUDIO */}
@@ -299,27 +335,13 @@ export default function Transcription() {
                                 </div>
                             </Listbox>
                         </div>
-                        <div className="flex items-center justify-between space-x-3 border-t border-gray-200 px-2 py-2 sm:px-3">
-                            <div className="flex">
-                                <button
-                                    type="button"
-                                    className="group -my-2 -ml-2 inline-flex items-center rounded-full px-3 py-2 text-left text-gray-400"
-                                >
-                                    <PaperClipIcon
-                                        aria-hidden="true"
-                                        className="-ml-1 mr-2 h-5 w-5 group-hover:text-gray-500"
-                                    />
-                                    <span className="text-sm italic text-gray-500 group-hover:text-gray-600">
-                                        Attach a file
-                                    </span>
-                                </button>
-                            </div>
+                        <div className="flex items-center justify-end space-x-3 border-t border-gray-200 px-2 py-2 sm:px-3">
                             <div className="flex-shrink-0">
                                 <button
                                     type="submit"
                                     className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                 >
-                                    Create
+                                    Save
                                 </button>
                             </div>
                         </div>
