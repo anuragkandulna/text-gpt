@@ -57,7 +57,7 @@ function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
 }
 
-export default function Transcription() {
+export default function TranscriptionCard() {
     const [assigned, setAssigned] = useState(assignees[0]);
     const [labelled, setLabelled] = useState(labels[0]);
     const [dated, setDated] = useState(dueDates[0]);
