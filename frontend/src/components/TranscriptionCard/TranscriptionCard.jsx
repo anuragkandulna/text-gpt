@@ -2,38 +2,12 @@ import { useState } from "react";
 import {
     ArrowLongLeftIcon,
     ArrowLongRightIcon,
-    CalendarIcon,
-    TagIcon,
-    UserCircleIcon,
 } from "@heroicons/react/20/solid";
-import { Listbox } from "@headlessui/react";
-
-const assignees = [
-    { name: "Unassigned", value: null },
-    {
-        name: "Wade Cooper",
-        value: "wade-cooper",
-        avatar: "https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    },
-    // More items...
-];
-
-const labels = [
-    { name: "Unlabelled", value: null },
-    { name: "Engineering", value: "engineering" },
-    // More items...
-];
-
-const dueDates = [
-    { name: "No due date", value: null },
-    { name: "Today", value: "today" },
-    // More items...
-];
 
 const teams = [
-    { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
-    { id: 2, name: "Tailwind Labs", href: "#", initial: "T", current: false },
-    { id: 3, name: "Workcation", href: "#", initial: "W", current: false },
+    { id: 1, name: "Heroicons", href: "#", initial: "H" },
+    { id: 2, name: "Tailwind Labs", href: "#", initial: "T" },
+    { id: 3, name: "Workcation", href: "#", initial: "W" },
 ];
 
 function classNames(...classes) {
@@ -41,9 +15,6 @@ function classNames(...classes) {
 }
 
 export default function TranscriptionCard() {
-    const [assigned, setAssigned] = useState(assignees[0]);
-    const [labelled, setLabelled] = useState(labels[0]);
-    const [dated, setDated] = useState(dueDates[0]);
     const [selectedTeam, setSelectedTeam] = useState(teams[0].name);
 
     const handleClick = (teamName) => {
@@ -154,28 +125,15 @@ export default function TranscriptionCard() {
                                 aria-hidden="true"
                                 className="mr-3 h-5 w-5 text-gray-400"
                             />
-                            Previous
+                            Translate
                         </a>
                     </div>
-                    <div className="hidden md:-mt-px md:flex">
+                    <div className="md:-mt-px md:flex">
                         <a
                             href="#"
                             className="inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
                         >
-                            1
-                        </a>
-                        <a
-                            href="#"
-                            aria-current="page"
-                            className="inline-flex items-center border-t-2 border-indigo-500 px-4 pt-4 text-sm font-medium text-indigo-600"
-                        >
-                            2
-                        </a>
-                        <a
-                            href="#"
-                            className="inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                        >
-                            3
+                            Finish
                         </a>
                     </div>
                     <div className="-mt-px flex w-0 flex-1 justify-end">
@@ -183,7 +141,7 @@ export default function TranscriptionCard() {
                             href="#"
                             className="inline-flex items-center border-t-2 border-transparent pl-1 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
                         >
-                            Next
+                            Summary
                             <ArrowLongRightIcon
                                 aria-hidden="true"
                                 className="ml-3 h-5 w-5 text-gray-400"
