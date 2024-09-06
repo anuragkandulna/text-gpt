@@ -60,6 +60,13 @@ export default function Transcription() {
     const [labelled, setLabelled] = useState(labels[0]);
     const [dated, setDated] = useState(dueDates[0]);
     const [selectedColor, setSelectedColor] = useState(options[1]);
+
+    const [selectedTeam, setSelectedTeam] = useState(teams[0].name);
+
+    const handleClick = (teamName) => {
+        setSelectedTeam(teamName);
+    };
+
     return (
         <div className="divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow">
             <div className="px-4 py-5 sm:px-6">
@@ -74,26 +81,26 @@ export default function Transcription() {
                 <ul role="list" className="flex gap-x-3 mt-2">
                     {teams.map((team) => (
                         <li key={team.name}>
-                            <a
-                                href={team.href}
+                            <button
+                                onClick={() => handleClick(team.name)}
                                 className={classNames(
-                                    team.current
-                                        ? "bg-gray-50 text-indigo-600"
-                                        : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
-                                    "group flex items-center justify-center rounded-md p-2"
+                                    team.name === selectedTeam
+                                        ? "bg-indigo-600 text-white"
+                                        : "bg-gray-200 text-gray-600 hover:bg-indigo-500 hover:text-white",
+                                    "group flex items-center justify-center rounded-full p-4 text-sm font-semibold leading-6 transition-all"
                                 )}
                             >
                                 <span
                                     className={classNames(
-                                        team.current
-                                            ? "border-indigo-600 text-indigo-600"
-                                            : "border-gray-200 text-gray-400 group-hover:border-indigo-600 group-hover:text-indigo-600",
-                                        "flex h-6 w-6 items-center justify-center rounded-lg border bg-white text-[0.625rem] font-medium"
+                                        team.name === selectedTeam
+                                            ? "border-white text-white"
+                                            : "border-gray-400 text-gray-800 group-hover:border-white group-hover:text-white",
+                                        "flex h-10 w-10 items-center justify-center rounded-full border bg-white text-[0.875rem] font-bold"
                                     )}
                                 >
                                     {team.initial}
                                 </span>
-                            </a>
+                            </button>
                         </li>
                     ))}
                 </ul>
