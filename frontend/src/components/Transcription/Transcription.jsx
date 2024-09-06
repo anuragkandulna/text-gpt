@@ -1,4 +1,6 @@
 import { useState } from "react";
+import React from "react";
+import { Fragment } from "react";
 import {
     ArrowLongLeftIcon,
     ArrowLongRightIcon,
@@ -78,7 +80,7 @@ export default function Transcription() {
                 <p className="mt-3 text-md text-center">
                     Playback audio and verify the transcription.
                 </p>
-                <ul role="list" className="flex gap-x-3 mt-2">
+                <ul role="list" className="flex gap-x-3 mt-2 justify-center">
                     {teams.map((team) => (
                         <li key={team.name}>
                             <button
@@ -87,15 +89,16 @@ export default function Transcription() {
                                     team.name === selectedTeam
                                         ? "bg-indigo-600 text-white"
                                         : "bg-gray-200 text-gray-600 hover:bg-indigo-500 hover:text-white",
-                                    "group flex items-center justify-center rounded-full p-4 text-sm font-semibold leading-6 transition-all"
+                                    "group flex items-center justify-center rounded-full p-1 text-sm font-semibold leading-6 transition-all h-10 w-10"
                                 )}
+                                style={{ padding: "1px" }} // Ensuring minimal space between span and button
                             >
                                 <span
                                     className={classNames(
                                         team.name === selectedTeam
-                                            ? "border-white text-white"
+                                            ? "border-white text-indigo-600"
                                             : "border-gray-400 text-gray-800 group-hover:border-white group-hover:text-white",
-                                        "flex h-10 w-10 items-center justify-center rounded-full border bg-white text-[0.875rem] font-bold"
+                                        "flex h-full w-full items-center justify-center rounded-full border bg-white text-[1rem] font-bold"
                                     )}
                                 >
                                     {team.initial}
