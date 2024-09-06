@@ -45,6 +45,12 @@ const options = [
     { name: "Yellow", color: "text-yellow-500" },
 ];
 
+const teams = [
+    { id: 1, name: "Heroicons", href: "#", initial: "H", current: false },
+    { id: 2, name: "Tailwind Labs", href: "#", initial: "T", current: false },
+    { id: 3, name: "Workcation", href: "#", initial: "W", current: false },
+];
+
 function classNames(...classes) {
     return classes.filter(Boolean).join(" ");
 }
@@ -65,32 +71,32 @@ export default function Transcription() {
                 <p className="mt-3 text-md text-center">
                     Playback audio and verify the transcription.
                 </p>
-                <fieldset>
-                    <div className="w-full flex justify-center">
-                        <RadioGroup
-                            value={selectedColor}
-                            onChange={setSelectedColor}
-                            className="mt-6 flex items-center space-x-3"
-                        >
-                            {options.map((option) => (
-                                <Radio
-                                    key={option.name}
-                                    value={option}
-                                    aria-label={option.name}
+                <ul role="list" className="flex gap-x-3 mt-2">
+                    {teams.map((team) => (
+                        <li key={team.name}>
+                            <a
+                                href={team.href}
+                                className={classNames(
+                                    team.current
+                                        ? "bg-gray-50 text-indigo-600"
+                                        : "text-gray-700 hover:bg-gray-50 hover:text-indigo-600",
+                                    "group flex items-center justify-center rounded-md p-2"
+                                )}
+                            >
+                                <span
                                     className={classNames(
-                                        option.color,
-                                        "relative -m-0.5 flex cursor-pointer items-center justify-center rounded-full p-0.5 ring-current focus:outline-none data-[checked]:ring-2 data-[focus]:data-[checked]:ring data-[focus]:data-[checked]:ring-offset-1"
+                                        team.current
+                                            ? "border-indigo-600 text-indigo-600"
+                                            : "border-gray-200 text-gray-400 group-hover:border-indigo-600 group-hover:text-indigo-600",
+                                        "flex h-6 w-6 items-center justify-center rounded-lg border bg-white text-[0.625rem] font-medium"
                                     )}
                                 >
-                                    <span
-                                        aria-hidden="true"
-                                        className="h-8 w-8 rounded-full border border-black border-opacity-10 bg-current"
-                                    />
-                                </Radio>
-                            ))}
-                        </RadioGroup>
-                    </div>
-                </fieldset>
+                                    {team.initial}
+                                </span>
+                            </a>
+                        </li>
+                    ))}
+                </ul>
             </div>
             <div className="min-h-[50vh] flex flex-col bg-gray-50  px-4 py-5 sm:p-6">
                 {/* PLAYBACK AUDIO */}
