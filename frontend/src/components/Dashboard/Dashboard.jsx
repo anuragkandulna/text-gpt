@@ -10,6 +10,8 @@ import {
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import YoutubeCard from "../YoutubeCard/YoutubeCard";
 import TranscriptionCard from "../TranscriptionCard/TranscriptionCard";
+import TranslationCard from "../TranslationCard/TranslationCard";
+import SummarizationCard from "../SummarizationCard/SummarizationCard";
 
 const user = {
     name: "Tom Cook",
@@ -46,7 +48,9 @@ export default function Dashboard() {
         ```
       */}
             {/* <YoutubeCard /> */}
-            <TranscriptionCard />
+            {/* <TranscriptionCard /> */}
+            {/* <TranslationCard /> */}
+            <SummarizationCard />
         </>
     );
 }
