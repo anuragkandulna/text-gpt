@@ -47,10 +47,10 @@ export default function Dashboard() {
         <body class="h-full">
         ```
       */}
-            {/* <YoutubeCard /> */}
+            <YoutubeCard />
             {/* <TranscriptionCard /> */}
             {/* <TranslationCard /> */}
-            <SummarizationCard />
+            {/* <SummarizationCard /> */}
         </>
     );
 }
