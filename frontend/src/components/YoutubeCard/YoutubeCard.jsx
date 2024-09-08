@@ -1,11 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     SOURCE_VIDEO_LANGUAGES,
     VIDEO_SEGMENT_LENGTHS,
 } from "../../constants/appConstants";
-import { ExclamationCircleIcon } from "@heroicons/react/20/solid";
+import {
+    ExclamationCircleIcon,
+    CheckCircleIcon,
+} from "@heroicons/react/20/solid";
 
 export default function YoutubeCard() {
+    const [inputLink, setInputLink] = useState("");
+    const [isValidUrl, setIsValidUrl] = useState(null);
+
+    const validateYouTubeUrl = (url) => {
+        const regex = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/;
+        return regex.test(url);
+    };
+
+    const handleInputChange = (e) => {
+        const url = e.target.value;
+        setInputLink(url);
+        setIsValidUrl(validateYouTubeUrl(url));
+    };
+
     return (
         <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="px-4 py-5 sm:p-12 text-center">
@@ -30,24 +47,41 @@ export default function YoutubeCard() {
                                 id="inputLink"
                                 name="inputLink"
                                 type="url"
+                                value={inputLink}
+                                onChange={handleInputChange}
                                 placeholder="https://www.youtube.com/watch?v=7hKhxDpVzU4"
-                                aria-invalid="true"
-                                aria-describedby="inputLink-error"
-                                className="block w-full rounded-md border-0 py-1.5 pr-10 text-red-900 ring-1 ring-inset ring-red-300 placeholder:text-red-300 focus:ring-2 focus:ring-inset focus:ring-red-500 sm:text-sm sm:leading-6"
+                                aria-invalid={!isValidUrl}
+                                aria-describedby="inputLink-feedback"
+                                className={`block w-full rounded-md border-0 py-1.5 pr-10 ${
+                                    isValidUrl === false
+                                        ? "text-red-900 ring-red-300 placeholder:text-red-300 focus:ring-red-500"
+                                        : isValidUrl === true
+                                        ? "text-green-900 ring-green-300 placeholder:text-green-300 focus:ring-green-500"
+                                        : "text-gray-900 ring-gray-300 placeholder:text-gray-400 focus:ring-indigo-600"
+                                } ring-1 ring-inset sm:text-sm sm:leading-6`}
                             />
                             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                                <ExclamationCircleIcon
-                                    aria-hidden="true"
-                                    className="h-5 w-5 text-red-500"
-                                />
+                                {isValidUrl === false ? (
+                                    <ExclamationCircleIcon
+                                        aria-hidden="true"
+                                        className="h-5 w-5 text-red-500"
+                                    />
+                                ) : isValidUrl === true ? (
+                                    <CheckCircleIcon
+                                        aria-hidden="true"
+                                        className="h-5 w-5 text-green-500"
+                                    />
+                                ) : null}
                             </div>
                         </div>
-                        <p
-                            id="inputLink-error"
-                            className="mt-2 text-sm text-red-600"
-                        >
-                            Not a valid URL.
-                        </p>
+                        {isValidUrl === false && (
+                            <p
+                                id="inputLink-feedback"
+                                className="mt-2 text-sm text-red-600"
+                            >
+                                Not a valid YouTube URL.
+                            </p>
+                        )}
                     </div>
 
                     <fieldset className="text-left">
