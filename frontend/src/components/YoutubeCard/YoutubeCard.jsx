@@ -1,18 +1,8 @@
 import React from "react";
-
-const videoSegmentLengths = [
-    { id: "len30", title: "30 secs" },
-    { id: "len60", title: "60 secs" },
-    { id: "len120", title: "120 secs" },
-];
-
-const sourceVideoLanguages = [
-    { id: "en-IN", language: "English (India)" },
-    { id: "hi-IN", language: "Hindi (India)" },
-    { id: "bn-IN", language: "Bengali (India)" },
-    { id: "en-US", language: "English (United States)" },
-    { id: "en-UK", language: "English (United Kingdom)" },
-];
+import {
+    SOURCE_VIDEO_LANGUAGES,
+    VIDEO_SEGMENT_LENGTHS,
+} from "../../constants/appConstants";
 
 export default function YoutubeCard() {
     return (
@@ -56,7 +46,7 @@ export default function YoutubeCard() {
                         </legend>
 
                         <div className="mt-2 space-y-6 sm:flex sm:items-center sm:space-x-10 sm:space-y-0 justify-center">
-                            {videoSegmentLengths.map((videoSegment) => (
+                            {VIDEO_SEGMENT_LENGTHS.map((videoSegment) => (
                                 <div
                                     key={videoSegment.id}
                                     className="flex items-center"
@@ -92,7 +82,7 @@ export default function YoutubeCard() {
                                 autoComplete="country-name"
                                 className="relative block w-full rounded-md border-0 bg-transparent py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             >
-                                {sourceVideoLanguages.map((videoLanguage) => (
+                                {SOURCE_VIDEO_LANGUAGES.map((videoLanguage) => (
                                     <option key={videoLanguage.id}>
                                         {videoLanguage.language}
                                     </option>
