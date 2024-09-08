@@ -12,6 +12,7 @@ export default function YoutubeCard() {
     const [inputLink, setInputLink] = useState("");
     const [isValidUrl, setIsValidUrl] = useState(null);
 
+    // Validate Youtube url using regex
     const validateYouTubeUrl = (url) => {
         const regex = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/;
         return regex.test(url);
@@ -38,9 +39,9 @@ export default function YoutubeCard() {
                     <div className="w-full">
                         <label
                             htmlFor="inputLink"
-                            className="block text-left text-sm font-medium text-gray-900"
+                            className="block text-left text-lg font-medium text-gray-900"
                         >
-                            Input Link
+                            Youtube Link
                         </label>
                         <div className="relative mt-2 rounded-md shadow-sm">
                             <input
@@ -88,7 +89,7 @@ export default function YoutubeCard() {
                         <legend className="text-sm font-semibold leading-6 text-gray-900">
                             Maximum length of each segment?
                         </legend>
-                        <div className="mt-2 space-y-6 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
+                        <div className="mt-2 space-y-0 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
                             {VIDEO_SEGMENT_LENGTHS.map((videoSegment) => (
                                 <div
                                     key={videoSegment.id}
