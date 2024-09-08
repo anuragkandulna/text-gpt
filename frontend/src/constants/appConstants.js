@@ -1,7 +1,7 @@
 export const VIDEO_SEGMENT_LENGTHS = [
-    { id: "len30", title: "30 secs" },
-    { id: "len60", title: "60 secs" },
-    { id: "len120", title: "120 secs" },
+    { id: "len30", title: "30 secs", length: 30 },
+    { id: "len60", title: "60 secs", length: 60 },
+    { id: "len120", title: "120 secs", length: 120 },
 ];
 
 export const SOURCE_VIDEO_LANGUAGES = [
