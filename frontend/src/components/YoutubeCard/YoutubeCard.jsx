@@ -19,7 +19,7 @@ export default function YoutubeCard() {
         <>
             <div className="overflow-hidden rounded-lg bg-white shadow">
                 <div className="px-4 py-5 sm:p-12">
-                    {/* Header goes here */}
+                    {/* Youtube page header */}
                     <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900 text-center">
                         Write me up!
                     </h1>
@@ -28,18 +28,18 @@ export default function YoutubeCard() {
                     </p>
                 </div>
                 <div className="min-h-[50vh] flex flex-col bg-gray-50 px-4 py-5 sm:p-6">
-                    {/* Content goes here */}
+                    {/* YOUTUBE PAGE FORM */}
 
                     <form className="sm:flex sm:items-center justify-center">
                         <div className="w-full sm:max-w-xs flex">
                             <label htmlFor="email" className="sr-only">
-                                Email
+                                Input Link
                             </label>
                             <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                placeholder="you@example.com"
+                                id="inputLink"
+                                name="inputLink"
+                                type="url"
+                                placeholder="https://www.youtube.com/watch?v=7hKhxDpVzU4"
                                 className="block w-full rounded-l-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                             />
                             <button
@@ -54,9 +54,7 @@ export default function YoutubeCard() {
                         <legend className="text-md font-semibold leading-6 text-gray-900 -indent-16">
                             Maximum length of each segment?
                         </legend>
-                        {/* <p className="mt-1 text-sm leading-6 text-gray-600">
-                            How do you prefer to receive notifications?
-                        </p> */}
+
                         <div className="mt-2 space-y-6 sm:flex sm:items-center sm:space-x-10 sm:space-y-0 justify-center">
                             {videoSegmentLengths.map((videoSegment) => (
                                 <div
@@ -87,9 +85,6 @@ export default function YoutubeCard() {
                         <legend className="text-md font-semibold leading-6 text-gray-900 -indent-36">
                             Source video language:
                         </legend>
-                        {/* <p className="mt-1 text-sm leading-6 text-gray-600">
-                            How do you prefer to receive notifications?
-                        </p> */}
                         <div className="w-full mt-2 sm:max-w-xs flex ">
                             <select
                                 id="sourceVideoLanguage"
@@ -102,9 +97,6 @@ export default function YoutubeCard() {
                                         {videoLanguage.language}
                                     </option>
                                 ))}
-                                {/* <option>United States</option>
-                                <option>Canada</option>
-                                <option>Mexico</option> */}
                             </select>
                         </div>
                     </fieldset>
