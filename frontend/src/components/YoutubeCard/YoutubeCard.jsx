@@ -65,7 +65,7 @@ export default function YoutubeCard() {
                                 >
                                     <input
                                         defaultChecked={
-                                            videoSegment.id === "len60"
+                                            videoSegment.id === "len30"
                                         }
                                         id={videoSegment.id}
                                         name="notification-method"
