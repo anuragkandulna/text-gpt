@@ -7,7 +7,7 @@ from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from routes.auth import auth_bp
 from routes.project import project_bp
-from models.custom_logger import CustomLogger
+from utils.custom_logger import CustomLogger
 
 
 # Initialize Flask app
