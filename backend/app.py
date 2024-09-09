@@ -44,7 +44,7 @@ def login():
             return jsonify({"message": "Incorrect password!!!"}), 403
 
     except Exception as e:
-        LOGGER.info(f'Exception in user login API/v1/login: {e}')
+        LOGGER.error(f'Exception in user login API/v1/login: {e}')
         return jsonify({"message": "An error occurred"}), 500
 
 
@@ -69,8 +69,38 @@ def register():
         return jsonify({"message": f"{username} User registered successfully!"}), 201
     
     except Exception as e:
-        LOGGER.info(f'Exception in new user registration API/v1/register: {e}')
+        LOGGER.error(f'Exception in new user registration API/v1/register: {e}')
         return jsonify({"message": "An error occurred during registration"}), 500
+
+
+# Create a new youtube project
+@app.route('/api/v1/newproject', methods=['POST'])
+def newproject():
+    try:
+        data = request.json
+
+        uuid = data.get('id')
+        title = data.get('title')
+        url = data.get('url')
+        length = data.get('length')
+        src_video_lang_id = data.get('source_video_language_id')
+
+
+        # # Hash the password
+        # password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+
+        # User.create_new_user(
+        #     username=username,
+        #     password_hash=password_hash
+        # )
+
+        LOGGER.info(f"{username} project created successfully!")
+        return jsonify({"message": f"{title} project created successfully!"}), 201
+    
+    except Exception as e:
+        LOGGER.error(f'Exception in new project creation API/v1/newproject: {e}')
+        return jsonify({"message": "An error when creating new project"}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)
