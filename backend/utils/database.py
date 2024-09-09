@@ -2,7 +2,7 @@
 
 from pymongo import MongoClient
 from pymongo.collection import Collection
-from models.custom_logger import CustomLogger
+from utils.custom_logger import CustomLogger
 
 # Invoke LOGGER
 LOGGER = CustomLogger(__name__, level=20).get_logger()
