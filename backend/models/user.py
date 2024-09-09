@@ -3,8 +3,8 @@ User data model.
 """
 
 from datetime import datetime, timezone
-from models.database import DatabaseConnection
-from models.custom_logger import CustomLogger
+from utils.database import DatabaseConnection
+from utils.custom_logger import CustomLogger
 
 
 # Invoke LOGGER
