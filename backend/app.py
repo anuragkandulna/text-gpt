@@ -94,7 +94,7 @@ def newproject():
         #     password_hash=password_hash
         # )
 
-        LOGGER.info(f"{username} project created successfully!")
+        LOGGER.info(f"{title} project created successfully!")
         return jsonify({"message": f"{title} project created successfully!"}), 201
     
     except Exception as e:
