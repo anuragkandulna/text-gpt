@@ -3,7 +3,7 @@ Routes for project creation and management.
 """
 
 from flask import Blueprint, request, jsonify
-from models.custom_logger import CustomLogger
+from utils.custom_logger import CustomLogger
 
 
 # Initialize constants: blueprint, loggers, etc
