@@ -5,14 +5,14 @@ Routes for user authentication and management.
 from flask import Blueprint, request, jsonify
 from flask_bcrypt import Bcrypt
 from datetime import datetime, timezone
-from models.custom_logger import CustomLogger
+from utils.custom_logger import CustomLogger
 from models.user import User
 
 
 # Initialize constants: blueprint, loggers, etc
 auth_bp = Blueprint('auth_bp', __name__)
 bcrypt = Bcrypt()
-LOGGER = CustomLogger(__name__, level=20).get_logger()
+LOGGER = CustomLogger(__name__, level=20, log_file="auth.log").get_logger()
 
 
 @auth_bp.route('/api/v1/login', methods=['POST'])
