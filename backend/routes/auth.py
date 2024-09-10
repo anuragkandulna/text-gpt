@@ -12,7 +12,7 @@ from models.user import User
 # Initialize constants: blueprint, loggers, etc
 auth_bp = Blueprint('auth_bp', __name__)
 bcrypt = Bcrypt()
-LOGGER = CustomLogger(__name__, level=20, log_file="auth.log").get_logger()
+LOGGER = CustomLogger(__name__, level=20, log_file="textgpt_auth.log").get_logger()
 
 
 @auth_bp.route('/api/v1/login', methods=['POST'])
