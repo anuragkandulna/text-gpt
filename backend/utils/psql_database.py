@@ -29,7 +29,7 @@ class DatabaseConnection:
                 LOGGER.error("Failed to create connection pool.")
 
         except Exception as ex:
-            LOGGER.error(f"Failed to connect to the database: {ex}")
+            LOGGER.critical(f"Failed to connect to the database: {ex}")
             raise
 
 
