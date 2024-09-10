@@ -8,7 +8,7 @@ from utils.custom_logger import CustomLogger
 
 # Initialize constants: blueprint, loggers, etc
 project_bp = Blueprint('project_bp', __name__)
-LOGGER = CustomLogger(__name__, level=20).get_logger()
+LOGGER = CustomLogger(__name__, level=20, log_file="textgpt_project.log").get_logger()
 
 
 @project_bp.route('/api/v1/create_new', methods=['POST'])
