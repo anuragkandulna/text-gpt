@@ -3,7 +3,7 @@ Project data model.
 """
 
 from datetime import datetime
-from utils.database import DatabaseConnection
+from backend.utils.mongo_database import DatabaseConnection
 from utils.custom_logger import CustomLogger
 
 
