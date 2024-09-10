@@ -123,7 +123,14 @@ class DatabaseConnection:
         """
         Check the health of the database connection.
         """
-        return self._execute("SELECT 1", fetch=True)
+        try:
+            with self as db:
+                result = db._execute("SELECT 1", fetch=True)
+                return result is not None
+
+        except Exception as ex:
+            LOGGER.error(f"Health check failed: {ex}")
+            return False
 
 
     def close_connection(self) -> None:
