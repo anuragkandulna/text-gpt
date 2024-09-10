@@ -78,47 +78,6 @@ class DatabaseConnection:
             raise
 
 
-    def begin_transaction(self) -> None:
-        """
-        Begin a transaction.
-        """
-        self.connection.autocommit = False
-        LOGGER.info("Transaction started.")
-
-
-    def commit_transaction(self) -> None:
-        """
-        Commit the transaction.
-        """
-        try:
-            self.connection.commit()
-            LOGGER.info("Transaction committed.")
-
-        except Exception as ex:
-            LOGGER.error(f"Failed to commit transaction: {ex}")
-            self.connection.rollback()
-            raise
-
-        finally:
-            self.connection.autocommit = True
-
-
-    def rollback_transaction(self) -> None:
-        """
-        Rollback the transaction.
-        """
-        try:
-            self.connection.rollback()
-            LOGGER.info("Transaction rolled back.")
-
-        except Exception as ex:
-            LOGGER.error(f"Failed to rollback transaction: {ex}")
-            raise
-
-        finally:
-            self.connection.autocommit = True
-
-
     def health_check(self) -> bool:
         """
         Check the health of the database connection.
@@ -172,7 +131,7 @@ class DatabaseConnection:
 
             if fetch:
                 result = self.cursor.fetchall()
-                LOGGER.info(f"Executed query: {query} with fetch")
+                LOGGER.info(f"Executed fetch query: {query}")
                 return result
             self.connection.commit()
             LOGGER.info(f"Executed query: {query}")
