@@ -22,11 +22,5 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(project_bp)
 
 
-@app.route('/api/test', methods=['GET'])
-def test():
-    LOGGER.info('Test route hit!!!')
-    return jsonify({"message": "Test route is working!"}), 200
-
-
 if __name__ == '__main__':
     app.run(debug=True)
