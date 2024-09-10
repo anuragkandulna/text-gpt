@@ -3,6 +3,14 @@ Project data model.
 """
 
 from datetime import datetime
+from utils.database import DatabaseConnection
+from utils.custom_logger import CustomLogger
+
+
+# Invoke LOGGER
+LOGGER = CustomLogger(__name__, level=10).get_logger()
+DB_CONN = DatabaseConnection()
+
 
 class Project:
     def __init__(self):
@@ -29,6 +37,11 @@ class Project:
         self.final_transcript_file = ""
         self.final_translation_file = ""
         self.final_summary_file = ""
+
+
+    def _get_projects_collection():
+        """Get users collection."""
+        return DB_CONN.get_collection(db_table='projects')
 
 
     def create_project(self, title, url, audio_segment_len, src_video_lang):
