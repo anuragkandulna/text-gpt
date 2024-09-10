@@ -32,7 +32,7 @@ class User:
         updated_at = created_at
 
         query = """
-        INSERT INTO users (user_id, username, email, password_hash, role, is_active, created_at, updated_at)
+        INSERT INTO users (username, email, password_hash, role, is_active, created_at, updated_at)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
         params = (
