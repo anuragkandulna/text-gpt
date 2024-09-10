@@ -2,7 +2,6 @@
 User data model.
 """
 
-import uuid
 from datetime import datetime, timezone
 from utils.custom_logger import CustomLogger
 from utils.psql_database import DatabaseConnection
@@ -24,19 +23,11 @@ class User:
         self.updated_at = None
 
 
-    @staticmethod
-    def generate_user_id():
-        """Generate Unique ID for user and return in string format."""
-        unique_id = uuid.uuid4()
-        return str(unique_id)
-
-
     @classmethod
     def create_new_user(cls, username, password_hash):
         """
         Create 1 new user in database.
         """
-        user_id = cls.generate_user_id()
         created_at = datetime.now(timezone.utc)
         updated_at = created_at
 
@@ -45,7 +36,6 @@ class User:
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
         """
         params = (
-            user_id,
             username,
             username,
             password_hash,
@@ -59,7 +49,7 @@ class User:
             with DatabaseConnection() as db:
                 db.execute_query(query, params)
             LOGGER.info(f'Inserted one user into users table: {username}')
-            return user_id
+
         except Exception as ex:
             LOGGER.error(f'Failed to create new user: {ex}')
             raise
@@ -81,6 +71,7 @@ class User:
                 LOGGER.info(f'Queried user ID for {username}: {user_id}')
                 return user_id
             return None
+
         except Exception as ex:
             LOGGER.error(f'Failed to fetch user ID: {ex}')
             raise
@@ -112,6 +103,7 @@ class User:
                 LOGGER.info(f'Queried user data for {username}: {user_info}')
                 return user_info
             return None
+
         except Exception as ex:
             LOGGER.error(f'Failed to fetch user data: {ex}')
             raise
