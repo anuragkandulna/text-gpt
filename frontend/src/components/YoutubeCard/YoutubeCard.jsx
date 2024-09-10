@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     SOURCE_VIDEO_LANGUAGES,
     VIDEO_SEGMENT_LENGTHS,
@@ -9,19 +9,61 @@ import {
 } from "@heroicons/react/20/solid";
 
 export default function YoutubeCard() {
-    const [inputLink, setInputLink] = useState("");
+    // 1. Local variables
     const [isValidUrl, setIsValidUrl] = useState(null);
+    const [localInputLink, setLocalInputLink] = useState("");
+    const [localProjectName, setLocalProjectName] = useState("");
+    const [localSourceLanguage, setLocalSourceLanguage] = useState("en-IN");
 
-    // Validate Youtube url using regex
+    // 2. Validate Youtube url using regex
     const validateYouTubeUrl = (url) => {
         const regex = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/;
         return regex.test(url);
     };
 
-    const handleInputChange = (e) => {
+    // 3. Function to handle input change for youtube url input field
+    const handleUrlInputChange = (e) => {
         const url = e.target.value;
         setInputLink(url);
         setIsValidUrl(validateYouTubeUrl(url));
+    };
+
+    // 4. Handle Language change
+    const handleLanguageChange = (e) => {
+        const srcLang = e.target.value;
+        setLocalSourceLanguage(srcLang);
+    };
+
+    // 5. Function to generate default project name
+    const generateProjectName = () => {
+        const timestamp = new Date().toISOString().replace(/[-:.]/g, "");
+        return `project_${timestamp}`;
+    };
+
+    // 5. Handle Dynamic elements upon page refresh
+    useEffect(() => {
+        const defaultProjectName = generateProjectName();
+        setLocalProjectName(defaultProjectName);
+    }, []);
+
+    // 6. Submit form and navigate to next page
+    const handleStart = async (e) => {
+        e.preventDefault();
+
+        // Send request to Create Project API
+        const response = await fetch(
+            "http://127.0.0.1:5000/api/v1/create_new",
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    title: localProjectName,
+                    url: localInputLink,
+                    segment_length: length,
+                    video_source_language: localSourceLanguage,
+                }),
+            }
+        );
     };
 
     return (
@@ -35,7 +77,10 @@ export default function YoutubeCard() {
                 </p>
             </div>
             <div className="min-h-[50vh] flex flex-col bg-gray-50 px-4 py-5 sm:p-6">
-                <form className="space-y-6 sm:max-w-lg sm:mx-auto p-4 bg-white shadow-md rounded-md">
+                <form
+                    onSubmit={handleStart}
+                    className="space-y-6 sm:max-w-lg sm:mx-auto p-4 bg-white shadow-md rounded-md"
+                >
                     <div className="w-full">
                         <label
                             htmlFor="inputLink"
@@ -48,8 +93,9 @@ export default function YoutubeCard() {
                                 id="inputLink"
                                 name="inputLink"
                                 type="url"
-                                value={inputLink}
-                                onChange={handleInputChange}
+                                value={localInputLink}
+                                onChange={handleUrlInputChange}
+                                required
                                 placeholder="https://www.youtube.com/watch?v=7hKhxDpVzU4"
                                 aria-invalid={!isValidUrl}
                                 aria-describedby="inputLink-feedback"
@@ -121,6 +167,7 @@ export default function YoutubeCard() {
                         </legend>
                         <div className="mt-2 sm:max-w-xs">
                             <select
+                                onChange={handleLanguageChange}
                                 id="sourceVideoLanguage"
                                 name="sourceVideoLanguage"
                                 className="block w-full mt-1 rounded-md border-0 bg-transparent py-1.5 text-gray-900 ring-1 ring-inset ring-gray-300 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
