@@ -8,8 +8,8 @@ const initialState = {
     sourceVideoLanguageId: "en-IN",
 };
 
-export const youtubeSlice = createSlice({
-    name: "youtube",
+export const projectSlice = createSlice({
+    name: "project",
     initialState,
     // LIST OF ALL REDUCERS
     reducers: {
@@ -26,7 +26,7 @@ export const youtubeSlice = createSlice({
 });
 
 // 2. Export all reducers individually
-export const { createProject } = youtubeSlice.actions;
+export const { createProject } = projectSlice.actions;
 
 // 3. Register the reducer to store so that the store is aware of reducers accessing the data
-export default youtubeSlice.reducer;
+export default projectSlice.reducer;
