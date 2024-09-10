@@ -4,13 +4,12 @@ User data model.
 
 import uuid
 from datetime import datetime, timezone
-from backend.utils.mongo_database import DatabaseConnection
 from utils.custom_logger import CustomLogger
+from utils.psql_database import DatabaseConnection
 
 
 # Invoke LOGGER
 LOGGER = CustomLogger(__name__, level=20).get_logger()
-DB_CONN = DatabaseConnection()
 
 
 class User:
@@ -21,14 +20,8 @@ class User:
         self.password_hash = ""
         self.role = ""
         self.is_active = False
-        self.created_at = 0
-        self.updated_at = 0
-
-
-    @staticmethod
-    def _get_users_collection():
-        """Get users collection."""
-        return DB_CONN.get_collection(db_table='users')
+        self.created_at = None
+        self.updated_at = None
 
 
     @staticmethod
@@ -44,20 +37,32 @@ class User:
         Create 1 new user in database.
         """
         user_id = cls.generate_user_id()
+        created_at = datetime.now(timezone.utc)
+        updated_at = created_at
 
-        user_data = {
-            "user_id": user_id,
-            "username": username,
-            "email": username,
-            "password_hash": password_hash,
-            "role": None,
-            "is_active": True,
-            "created_at": datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S %Z'),
-            "updated_at": datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S %Z')
-        }
-        
-        LOGGER.info(f'Inserting one document into users table: {user_data}')
-        return cls._get_users_collection().insert_one(user_data)
+        query = """
+        INSERT INTO users (user_id, username, email, password_hash, role, is_active, created_at, updated_at)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """
+        params = (
+            user_id,
+            username,
+            username,
+            password_hash,
+            None,
+            True,
+            created_at,
+            updated_at
+        )
+
+        try:
+            with DatabaseConnection() as db:
+                db.execute_query(query, params)
+            LOGGER.info(f'Inserted one user into users table: {username}')
+            return user_id
+        except Exception as ex:
+            LOGGER.error(f'Failed to create new user: {ex}')
+            raise
 
 
     @classmethod
@@ -65,13 +70,20 @@ class User:
         """
         Get userID for a username.
         """
-        user_data = cls._get_users_collection().find_one({'username': username})
-        LOGGER.info(f'Queried user data for {username}: {user_data}')
+        query = "SELECT user_id FROM users WHERE username = %s"
+        params = (username,)
 
-        if user_data:
-            return user_data['user_id']
-
-        return None
+        try:
+            with DatabaseConnection() as db:
+                result = db.fetch_data(query, params)
+            if result:
+                user_id = result[0][0]
+                LOGGER.info(f'Queried user ID for {username}: {user_id}')
+                return user_id
+            return None
+        except Exception as ex:
+            LOGGER.error(f'Failed to fetch user ID: {ex}')
+            raise
 
 
     @classmethod
@@ -79,16 +91,27 @@ class User:
         """
         Return single document object for username.
         """
-        user_data = cls._get_users_collection().find_one({'username': username})
-        LOGGER.info(f'Queried user data for {username}: {user_data}')
+        query = """
+        SELECT username, email, password_hash, is_active
+        FROM users
+        WHERE username = %s
+        """
+        params = (username,)
 
-        if user_data:
-            return {
-                "username": user_data['username'],
-                "email": user_data['email'],
-                "password_hash": user_data['password_hash'],
-                "is_active": user_data['is_active'],
-            }
-
-        return None
-    
+        try:
+            with DatabaseConnection() as db:
+                result = db.fetch_data(query, params)
+            if result:
+                user_data = result[0]
+                user_info = {
+                    "username": user_data[0],
+                    "email": user_data[1],
+                    "password_hash": user_data[2],
+                    "is_active": user_data[3],
+                }
+                LOGGER.info(f'Queried user data for {username}: {user_info}')
+                return user_info
+            return None
+        except Exception as ex:
+            LOGGER.error(f'Failed to fetch user data: {ex}')
+            raise
