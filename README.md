@@ -8,3 +8,4 @@ Software to do write ups of a video
 5. Summarize transcription
 6. Translate to user preferred language
 
+## Flowchart
