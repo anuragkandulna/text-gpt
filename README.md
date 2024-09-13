@@ -9,4 +9,4 @@ Software to do write ups of a video
 6. Translate to user preferred language
 
 ## Flowchart
-![Architecture diagram](images/Flowchart.drawio.svg)
+![Architecture](images/Flowchart.drawio.png)
