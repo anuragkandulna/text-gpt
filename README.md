@@ -8,5 +8,5 @@ Software to do write ups of a video
 5. Summarize transcription
 6. Translate to user preferred language
 
-## Flowchart
-![Architecture](https://github.com/anuragkandulna/text-gpt/blob/main/Flowchart.drawio.png)
+## HLD Architecture
+![Architecture](https://github.com/anuragkandulna/text-gpt/blob/main/TextGPT_HLD.drawio.png)
