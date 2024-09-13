@@ -9,4 +9,4 @@ Software to do write ups of a video
 6. Translate to user preferred language
 
 ## Flowchart
-![Architecture](https://github.com/anuragkandulna/text-gpt/blob/main/Flowchart.drawio.svg)
+![Architecture](https://github.com/anuragkandulna/text-gpt/blob/main/Flowchart.drawio)
