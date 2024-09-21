@@ -6,6 +6,8 @@ from datetime import datetime
 import uuid
 from utils.psql_database import DatabaseConnection
 from utils.custom_logger import CustomLogger
+import validators
+import re
 
 
 # Invoke LOGGER
@@ -44,6 +46,14 @@ class Project:
     def _get_table_name():
         """Return the table name for projects."""
         return 'projects'
+
+
+    def is_valid_youtube_url(url):
+        """
+        Verify if Youtube URL is valid or not.
+        """
+        youtube_regex = r"(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})"
+        return validators.url(url) and bool(re.match(youtube_regex, url))
 
 
     @classmethod
@@ -87,6 +97,10 @@ class Project:
         """
 
         try:
+            if not cls.is_valid_youtube_url(url=url):
+                LOGGER.error(f"Invalid Youtube URL given by user: {url}")
+                return False
+
             with DB_CONN as db:
                 db.execute_query(insert_query, project_data)
                 LOGGER.info(f"Project {project_id} created and inserted into the database.")
