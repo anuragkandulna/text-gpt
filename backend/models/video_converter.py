@@ -94,6 +94,19 @@ class VideoConverter:
             LOGGER.info(f'Saved {fname} audio segment to {fpath}')
 
 
+    def get_metadata(self):
+        """
+        Get all info related to this converted video in JSON format.
+        """
+        return {
+            "url": self.url,
+            "audio_segment_len": self.audio_segment_len,
+            "src_video_title": self.src_video_title,
+            "src_video_len": self.src_video_len,
+            "num_segments": self.num_segments,
+            "tmp_audio_dir": self.tmp_audio_dir,
+            "tmp_audio_file_names": self.tmp_audio_file_names,
+            }
 
 
 
