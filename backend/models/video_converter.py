@@ -26,7 +26,6 @@ class VideoConverter:
         # Update all video meta
         self.url = url
         self.audio_segment_len = audio_segment_len
-        self.num_segments = MAX_AUDIO_LENGTH_SECS // audio_segment_len
 
         # Download video and process it
         try:
@@ -49,10 +48,30 @@ class VideoConverter:
             audio_file.seek(0)
             audio = AudioSegment.from_file(audio_file, format="mp4")
             LOGGER.info(f'Successfully converted video {self.url} to audio')
+
             return audio[:MAX_AUDIO_LENGTH_SECS * 1000]
 
         except Exception as ex:
             LOGGER.error(f'Failed to process YouTube URL {url}: {ex}')
+
+
+    def split_audio_into_segments(self, audio):
+        """
+        Split processed audio into segments.
+        """
+        max_segments = MAX_AUDIO_LENGTH_SECS // self.audio_segment_len
+        segments = []
+        segment_duration_ms = self.audio_segment_len * 1000
+
+        # iterage through entire audio range and spilt into segments
+        for i in range(0, len(audio), segment_duration_ms):
+            segments.append(audio[i:i + segment_duration_ms])
+        
+        self.num_segments = min(len(segments), max_segments)
+        LOGGER.info(f'{self.src_video_title} is cut into {self.num_segments} segments.')
+
+        return segments
+
 
 
 
