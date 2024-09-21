@@ -16,6 +16,8 @@ class VideoConverter:
         self.src_video_title = ""
         self.src_video_len = (0, 0, 0)  # (hr, min, sec)
         self.num_segments = 0
+        self.tmp_audio_dir = ""
+        self.tmp_audio_file_names = []
         # self.full_audio = None
 
         
@@ -63,7 +65,7 @@ class VideoConverter:
         segments = []
         segment_duration_ms = self.audio_segment_len * 1000
 
-        # iterage through entire audio range and spilt into segments
+        # Iterage through entire audio range and spilt into segments
         for i in range(0, len(audio), segment_duration_ms):
             segments.append(audio[i:i + segment_duration_ms])
         
@@ -72,6 +74,24 @@ class VideoConverter:
 
         return segments
 
+
+    def save_segments_to_wav(self, project_id, segments):
+        """
+        Save audio segments locally in /tmp.
+        """
+        self.tmp_audio_dir = f"/tmp/{project_id}/audio/"
+        if not os.path.exists(self.tmp_audio_dir):
+            os.makedirs(self.tmp_audio_dir)
+            LOGGER.info(f'Created temp dir for audio: {self.tmp_audio_dir}')
+
+        for i, segment in enumerate(segments):
+            fname = f"{self.src_video_title}_segment_{i + 1}.wav"
+            fpath = os.path.join(self.tmp_audio_dir, fname)
+            self.tmp_audio_file_names.append(fname)
+
+            # Save the audio segment to file
+            segment.export(fpath, format="wav")
+            LOGGER.info(f'Saved {fname} audio segment to {fpath}')
 
 
 
