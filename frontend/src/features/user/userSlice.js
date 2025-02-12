@@ -5,7 +5,7 @@ const initialState = {
     password: "password_hash",
     cpassword: "cpassword_hash",
     token: "token",
-    isAuthenticated: false,
+    isAuthenticated: true,
     isNewUser: true,
 };
 
