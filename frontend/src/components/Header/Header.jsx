@@ -44,10 +44,7 @@ export default function Navbar() {
                 <div className="flex h-16 justify-between">
                     <div className="flex">
                         <div className="flex flex-shrink-0 items-center">
-                            <Link
-                                to={isAuthenticated ? "/dashboard" : "/"}
-                                className="flex items-center"
-                            >
+                            <Link to="/" className="flex items-center">
                                 <img
                                     alt="Your Company"
                                     src={COMPANY_LOGO}
@@ -62,6 +59,19 @@ export default function Navbar() {
                         </div>
                     </div>
                     <div className="flex items-center">
+                        <div className="shrink-0">
+                            <Link
+                                to="/dashboard"
+                                type="button"
+                                className="relative inline-flex items-center gap-x-1.5 rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                            >
+                                <PlusIcon
+                                    aria-hidden="true"
+                                    className="-ml-0.5 size-5"
+                                />
+                                New Job
+                            </Link>
+                        </div>
                         <div className="md:ml-4 md:flex md:flex-shrink-0 md:items-center">
                             <ProfileMenu />
                         </div>
