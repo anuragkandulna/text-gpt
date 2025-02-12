@@ -12,6 +12,7 @@ import YoutubeCard from "../YoutubeCard/YoutubeCard";
 import TranscriptionCard from "../TranscriptionCard/TranscriptionCard";
 import TranslationCard from "../TranslationCard/TranslationCard";
 import SummarizationCard from "../SummarizationCard/SummarizationCard";
+import Projects from "../Projects/Projects";
 
 const user = {
     name: "Tom Cook",
@@ -51,6 +52,7 @@ export default function Dashboard() {
             {/* <TranscriptionCard /> */}
             {/* <TranslationCard /> */}
             {/* <SummarizationCard /> */}
+            <Projects />
         </>
     );
 }
