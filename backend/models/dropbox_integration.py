@@ -40,7 +40,6 @@ class DropboxIntegration():
         pass
 
 
-
 if __name__ == '__main__':
     # Check for an access token
     if (len(TOKEN) == 0):
