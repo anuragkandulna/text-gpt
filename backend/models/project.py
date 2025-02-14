@@ -1,176 +1,157 @@
-"""
-Project data model.
-"""
-
 from datetime import datetime
 import uuid
-from utils.psql_database import DatabaseConnection
-from utils.custom_logger import CustomLogger
-import validators
 import re
-
+import validators
+from sqlalchemy import Column, String, Integer, Boolean, DateTime
+from sqlalchemy.orm import sessionmaker
+from utils.custom_logger import CustomLogger
+from utils.psql_database import DatabaseConnection
+from sqlalchemy.ext.declarative import declarative_base
 
 # Invoke LOGGER
-LOGGER = CustomLogger(__name__, level=10).get_logger()
-DB_CONN = DatabaseConnection()
+LOGGER = CustomLogger(__name__, level=20).get_logger()
+
+# Get SQLAlchemy base
+Base = declarative_base()
+
+# Get SQLAlchemy session
+db_conn = DatabaseConnection()
+SessionLocal = db_conn.get_sqlalchemy_session()
 
 
-class Project:
-    def __init__(self):
-        self.project_id = ""
-        self.title = ""
-        self.url = ""
-        self.audio_segment_len = 0
-        self.src_video_lang = ""
-        self.src_video_title = ""
-        self.src_video_len = (0, 0, 0)  # (hr, min, sec)
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
-        self.is_deleted = False
-        self.translate_to_lang = ""
-        self.num_segments = 0
-        self.audio_dir = ""
-        self.transcription_dir = ""
-        self.translation_dir = ""
-        self.summary_dir = ""
-        self.seg_audio_files = []
-        self.seg_transcript_files = []
-        self.seg_translation_files = []
-        self.seg_summary_files = []
-        self.final_transcript_file = ""
-        self.final_translation_file = ""
-        self.final_summary_file = ""
+class Project(Base):
+    __tablename__ = "projects"
 
+    project_id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    title = Column(String, nullable=False)
+    url = Column(String, nullable=False)
+    audio_segment_len = Column(Integer, nullable=False, default=0)
+    src_video_lang = Column(String, nullable=False)
+    src_video_title = Column(String, nullable=True)
+    src_video_len_hr = Column(Integer, nullable=False, default=0)
+    src_video_len_min = Column(Integer, nullable=False, default=0)
+    src_video_len_sec = Column(Integer, nullable=False, default=0)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    is_deleted = Column(Boolean, default=False)
+    translate_to_lang = Column(String, nullable=True)
+    num_segments = Column(Integer, nullable=False, default=0)
+    audio_dir = Column(String, nullable=True)
+    transcription_dir = Column(String, nullable=True)
+    translation_dir = Column(String, nullable=True)
+    summary_dir = Column(String, nullable=True)
+    final_transcript_file = Column(String, nullable=True)
+    final_translation_file = Column(String, nullable=True)
+    final_summary_file = Column(String, nullable=True)
 
     @staticmethod
-    def _get_table_name():
-        """Return the table name for projects."""
-        return 'projects'
-
-
     def is_valid_youtube_url(url):
         """
-        Verify if Youtube URL is valid or not.
+        Verify if the given URL is a valid YouTube URL.
         """
-        youtube_regex = r"(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})"
+        youtube_regex = (
+            r"(https?://)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)/"
+            r"(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})"
+        )
         return validators.url(url) and bool(re.match(youtube_regex, url))
 
 
-    @classmethod
-    def create_project(cls, title, url, audio_segment_len, src_video_lang):
-        """
-        Create a new project in the PostgreSQL database.
-        """
-        project_id = str(uuid.uuid4())
-        created_at = datetime.now()
-        updated_at = created_at
+def create_project(title, url, audio_segment_len, src_video_lang):
+    """
+    Create a new project and add it to the database.
+    """
+    if not Project.is_valid_youtube_url(url):
+        raise ValueError("Invalid YouTube URL")
 
-        # Initialize directories using project_id as root
-        audio_dir = f"./{project_id}/audio/"
-        transcription_dir = f"./{project_id}/transcriptions/"
-        translation_dir = f"./{project_id}/translations/"
-        summary_dir = f"./{project_id}/summaries/"
+    session = SessionLocal()
+    try:
+        project = Project(
+            title=title,
+            url=url,
+            audio_segment_len=audio_segment_len,
+            src_video_lang=src_video_lang,
+            audio_dir=f"./{uuid.uuid4()}/audio/",
+            transcription_dir=f"./{uuid.uuid4()}/transcriptions/",
+            translation_dir=f"./{uuid.uuid4()}/translations/",
+            summary_dir=f"./{uuid.uuid4()}/summaries/",
+        )
 
-        # Prepare project data for insertion
-        project_data = {
-            "project_id": project_id,
-            "title": title,
-            "url": url,
-            "audio_segment_len": audio_segment_len,
-            "src_video_lang": src_video_lang,
-            "created_at": created_at,
-            "updated_at": updated_at,
-            "is_deleted": False,
-            "audio_dir": audio_dir,
-            "transcription_dir": transcription_dir,
-            "translation_dir": translation_dir,
-            "summary_dir": summary_dir
-        }
+        session.add(project)
+        session.commit()
+        LOGGER.info(f"Project {title} created successfully.")
+        return project
 
-        insert_query = f"""
-            INSERT INTO {cls._get_table_name()} 
-            (project_id, title, url, audio_segment_len, src_video_lang, created_at, updated_at, is_deleted, 
-            audio_dir, transcription_dir, translation_dir, summary_dir)
-            VALUES (%(project_id)s, %(title)s, %(url)s, %(audio_segment_len)s, %(src_video_lang)s, 
-            %(created_at)s, %(updated_at)s, %(is_deleted)s, %(audio_dir)s, %(transcription_dir)s, 
-            %(translation_dir)s, %(summary_dir)s)
-        """
+    except Exception as ex:
+        session.rollback()
+        LOGGER.error(f"Error while creating project {title}: {ex}")
+        raise
 
-        try:
-            if not cls.is_valid_youtube_url(url=url):
-                LOGGER.error(f"Invalid Youtube URL given by user: {url}")
-                return False
-
-            with DB_CONN as db:
-                db.execute_query(insert_query, project_data)
-                LOGGER.info(f"Project {project_id} created and inserted into the database.")
-
-        except Exception as ex:
-            LOGGER.error(f"Error while creating project {title}: {ex}")
-            raise
+    finally:
+        session.close()
 
 
-    @classmethod
-    def fetch_project(cls, project_id):
-        """
-        Fetch a project by its ID from the PostgreSQL database.
-        """
-        query = f"SELECT * FROM {cls._get_table_name()} WHERE project_id = %s"
+def fetch_project(project_id):
+    """
+    Fetch a project by its ID.
+    """
+    session = SessionLocal()
+    try:
+        return session.query(Project).filter(Project.project_id == project_id).first()
 
-        try:
-            with DB_CONN as db:
-                result = db.fetch_data(query, (project_id,))
-                if result:
-                    LOGGER.info(f"Fetched project data: {result}")
-                    return result[0]  # Return the first (and likely only) result
-                else:
-                    LOGGER.info(f"No project found with ID: {project_id}")
-                    return None
+    except Exception as ex:
+        LOGGER.error(f"Error fetching project {project_id}: {ex}")
+        raise
 
-        except Exception as ex:
-            LOGGER.error(f"Error fetching project {project_id}: {ex}")
-            raise
+    finally:
+        session.close()
 
 
-    @classmethod
-    def update_project(cls, project_id, updates):
-        """
-        Update project details in the PostgreSQL database.
-        """
-        updates['updated_at'] = datetime.now()
-        set_clause = ", ".join([f"{key} = %({key})s" for key in updates])
-        update_query = f"""
-            UPDATE {cls._get_table_name()}
-            SET {set_clause}
-            WHERE project_id = %(project_id)s
-        """
+def update_project(project_id, updates):
+    """
+    Update a project with new details.
+    """
+    session = SessionLocal()
+    try:
+        project = session.query(Project).filter(Project.project_id == project_id).first()
+        if not project:
+            return None
 
-        try:
-            with DB_CONN as db:
-                result = db.execute_query(update_query, {**updates, "project_id": project_id})
-                LOGGER.info(f"Updated project {project_id} with {updates}.")
-                return result
+        for key, value in updates.items():
+            setattr(project, key, value)
 
-        except Exception as ex:
-            LOGGER.error(f"Error updating project {project_id}: {ex}")
-            raise
+        project.updated_at = datetime.utcnow()
+        session.commit()
+        LOGGER.info(f"Updated project {project_id} with {updates}.")
+        return project
+
+    except Exception as ex:
+        session.rollback()
+        LOGGER.error(f"Error updating project {project_id}: {ex}")
+        raise
+
+    finally:
+        session.close()
 
 
-    @classmethod
-    def delete_project(cls, project_id):
-        """
-        Soft delete a project by setting is_deleted to True in the PostgreSQL database.
-        """
-        delete_query = f"""
-            UPDATE {cls._get_table_name()}
-            SET is_deleted = TRUE, updated_at = %(updated_at)s
-            WHERE project_id = %(project_id)s
-        """
-        try:
-            with DB_CONN as db:
-                db.execute_query(delete_query, {"project_id": project_id, "updated_at": datetime.now()})
-                LOGGER.info(f"Project {project_id} marked as deleted.")
+def delete_project(project_id):
+    """
+    Soft delete a project by setting is_deleted to True.
+    """
+    session = SessionLocal()
+    try:
+        project = session.query(Project).filter(Project.project_id == project_id).first()
+        if project:
+            project.is_deleted = True
+            project.updated_at = datetime.utcnow()
+            session.commit()
+            LOGGER.info(f"Project {project_id} marked as deleted.")
+            return True
+        return False
 
-        except Exception as ex:
-            LOGGER.error(f"Error marking project {project_id} as deleted: {ex}")
-            raise
+    except Exception as ex:
+        session.rollback()
+        LOGGER.error(f"Error marking project {project_id} as deleted: {ex}")
+        raise
+
+    finally:
+        session.close()
