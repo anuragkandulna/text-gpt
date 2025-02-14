@@ -46,11 +46,11 @@ export default function Projects() {
             <div className="overflow-hidden rounded-lg bg-white shadow">
                 <div className="px-4 py-5 sm:p-12 text-center">
                     <h1 className="text-2xl font-bold leading-tight tracking-tight text-gray-900">
-                        Write me up!
+                        Projects
                     </h1>
-                    <p className="mt-3 text-sm text-gray-700">
+                    {/* <p className="mt-3 text-sm text-gray-700">
                         Transcribe, Translate & Summarize any video!
-                    </p>
+                    </p> */}
                 </div>
                 <div className="min-h-[50vh] flex flex-col bg-gray-50 px-4 py-5 sm:p-6">
                     <ul
