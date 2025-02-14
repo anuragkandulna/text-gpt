@@ -5,6 +5,7 @@ from io import BytesIO
 from utils.custom_logger import CustomLogger
 from constants.constants import MAX_AUDIO_LENGTH_SECS
 
+
 # Defined constants
 LOGGER = CustomLogger(__name__, level=10).get_logger()
 
