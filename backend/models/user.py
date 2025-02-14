@@ -1,109 +1,99 @@
-"""
-User data model.
-"""
-
 from datetime import datetime, timezone
+import uuid
+from sqlalchemy import Column, String, Boolean, DateTime
+from sqlalchemy.orm import sessionmaker
 from utils.custom_logger import CustomLogger
 from utils.psql_database import DatabaseConnection
-
+from sqlalchemy.ext.declarative import declarative_base
 
 # Invoke LOGGER
 LOGGER = CustomLogger(__name__, level=20).get_logger()
 
+# Get SQLAlchemy base
+Base = declarative_base()
 
-class User:
-    def __init__(self):
-        self.user_id = ""
-        self.username = ""
-        self.email = ""
-        self.password_hash = ""
-        self.role = ""
-        self.is_active = False
-        self.created_at = None
-        self.updated_at = None
+# Get SQLAlchemy session
+db_conn = DatabaseConnection()
+SessionLocal = db_conn.get_sqlalchemy_session()
 
 
-    @classmethod
-    def create_new_user(cls, username, password_hash):
-        """
-        Create 1 new user in database.
-        """
-        created_at = datetime.now(timezone.utc)
-        updated_at = created_at
+class User(Base):
+    __tablename__ = "users"
 
-        query = """
-        INSERT INTO users (username, email, password_hash, role, is_active, created_at, updated_at)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-        """
-        params = (
-            username,
-            username,
-            password_hash,
-            None,
-            True,
-            created_at,
-            updated_at
+    user_id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    username = Column(String, unique=True, nullable=False)
+    email = Column(String, unique=True, nullable=False)
+    password_hash = Column(String, nullable=False)
+    role = Column(String, nullable=True)
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+
+
+def create_new_user(username, password_hash):
+    """
+    Create a new user in the database.
+    """
+    session = SessionLocal()
+    try:
+        user = User(
+            username=username,
+            email=username,  # Assuming email is the same as username for now
+            password_hash=password_hash,
+            role=None,
+            is_active=True,
         )
 
-        try:
-            with DatabaseConnection() as db:
-                db.execute_query(query, params)
-            LOGGER.info(f'Inserted one user into users table: {username}')
+        session.add(user)
+        session.commit()
+        LOGGER.info(f"User {username} created successfully.")
+        return user
 
-        except Exception as ex:
-            LOGGER.error(f'Failed to create new user: {ex}')
-            raise
+    except Exception as ex:
+        session.rollback()
+        LOGGER.error(f"Failed to create new user: {ex}")
+        raise
 
-
-    @classmethod
-    def get_user_id(cls, username):
-        """
-        Get userID for a username.
-        """
-        query = "SELECT user_id FROM users WHERE username = %s"
-        params = (username,)
-
-        try:
-            with DatabaseConnection() as db:
-                result = db.fetch_data(query, params)
-            if result:
-                user_id = result[0][0]
-                LOGGER.info(f'Queried user ID for {username}: {user_id}')
-                return user_id
-            return None
-
-        except Exception as ex:
-            LOGGER.error(f'Failed to fetch user ID: {ex}')
-            raise
+    finally:
+        session.close()
 
 
-    @classmethod
-    def find_by_username(cls, username):
-        """
-        Return single document object for username.
-        """
-        query = """
-        SELECT username, email, password_hash, is_active
-        FROM users
-        WHERE username = %s
-        """
-        params = (username,)
+def get_user_id(username):
+    """
+    Fetch the user ID for a given username.
+    """
+    session = SessionLocal()
+    try:
+        user = session.query(User).filter(User.username == username).first()
+        return user.user_id if user else None
 
-        try:
-            with DatabaseConnection() as db:
-                result = db.fetch_data(query, params)
-            if result:
-                user_data = result[0]
-                user_info = {
-                    "username": user_data[0],
-                    "email": user_data[1],
-                    "password_hash": user_data[2],
-                    "is_active": user_data[3],
-                }
-                LOGGER.info(f'Queried user data for {username}: {user_info}')
-                return user_info
-            return None
+    except Exception as ex:
+        LOGGER.error(f"Failed to fetch user ID: {ex}")
+        raise
 
-        except Exception as ex:
-            LOGGER.error(f'Failed to fetch user data: {ex}')
-            raise
+    finally:
+        session.close()
+
+
+def find_by_username(username):
+    """
+    Retrieve user details by username.
+    """
+    session = SessionLocal()
+    try:
+        user = session.query(User).filter(User.username == username).first()
+        if user:
+            return {
+                "username": user.username,
+                "email": user.email,
+                "password_hash": user.password_hash,
+                "is_active": user.is_active,
+            }
+        return None
+
+    except Exception as ex:
+        LOGGER.error(f"Failed to fetch user data: {ex}")
+        raise
+
+    finally:
+        session.close()
