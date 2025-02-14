@@ -1,5 +1,7 @@
 import psycopg2
 from psycopg2 import pool
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from utils.custom_logger import CustomLogger
 
 
@@ -10,9 +12,10 @@ LOGGER = CustomLogger(__name__, level=20).get_logger()
 class DatabaseConnection:
     def __init__(self) -> None:
         """
-        Set up a connection pool.
+        Set up a connection pool and SQLAlchemy engine.
         """
         try:
+            # Create PostgreSQL connection pool
             self.pool = psycopg2.pool.SimpleConnectionPool(
                 minconn=1,
                 maxconn=10,
@@ -27,6 +30,16 @@ class DatabaseConnection:
                 LOGGER.info("Connection pool created successfully.")
             else:
                 LOGGER.error("Failed to create connection pool.")
+
+            # SQLAlchemy engine and session setup
+            self.engine = create_engine(
+                "postgresql+psycopg2://baron:1234@localhost:5432/textgpt",
+                pool_size=10,
+                max_overflow=20
+            )
+            self.SessionLocal = sessionmaker(bind=self.engine)
+
+            LOGGER.info("SQLAlchemy engine and session created successfully.")
 
         except Exception as ex:
             LOGGER.critical(f"Failed to connect to the database: {ex}")
@@ -76,6 +89,13 @@ class DatabaseConnection:
         except Exception as ex:
             LOGGER.error(f"Failed to fetch data: {ex}")
             raise
+
+
+    def get_sqlalchemy_session(self):
+        """
+        Get a new SQLAlchemy session.
+        """
+        return self.SessionLocal()
 
 
     def health_check(self) -> bool:
