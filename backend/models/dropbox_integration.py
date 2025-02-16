@@ -1,13 +1,19 @@
 import dropbox
 import sys
+import os
 from dropbox.exceptions import ApiError, AuthError
+from utils.dropbox_connect import DropboxConnect
+from utils.custom_logger import CustomLogger
+
+# Logger
+LOGGER = CustomLogger(__name__, level=10).get_logger()
 
 
-TOKEN = ''
-
-
-class DropboxIntegration():
-    def __init__(self) -> None:
+class DropboxIntegration:
+    def __init__(self):
+        """
+        Initialize Dropbox connection and user attributes.
+        """
         self.username = ''
         self.user_uuid = ''
         self.project_id = ''
@@ -26,37 +32,73 @@ class DropboxIntegration():
         self.final_summary_file = ''
         self.metadata = ''
 
+        # Connect to Dropbox
+        self.dbx = None
+        self.connect()
+
     def connect(self):
         """
-        Connect to dropbox.
+        Establish a connection to Dropbox.
         """
+        try:
+            dropbox_client = DropboxConnect()
+            self.dbx = dropbox_client.dbx
+            account_info = self.dbx.users_get_current_account()
+            LOGGER.info(f"Connected to Dropbox as: {account_info.name.display_name}")
+        except AuthError:
+            LOGGER.critical("ERROR: Invalid Dropbox token. Authentication failed.")
+            sys.exit(1)
 
-
-
-    def register(self, username, user_uuid, ):
+    def register(self, username, user_uuid):
         """
-        Create a new directory for a user upon new registration.
+        Create a new directory structure in Dropbox for a user upon registration.
         """
-        pass
+        try:
+            self.username = username
+            self.user_uuid = user_uuid
+            self.project_root = f"/users/{self.user_uuid}"
+            self.audio_dir = f"{self.project_root}/audio/"
+            self.transcription_dir = f"{self.project_root}/transcriptions/"
+            self.translation_dir = f"{self.project_root}/translations/"
+            self.summary_dir = f"{self.project_root}/summaries/"
+
+            # Create folders in Dropbox
+            directories = [
+                self.project_root,
+                self.audio_dir,
+                self.transcription_dir,
+                self.translation_dir,
+                self.summary_dir,
+            ]
+
+            for directory in directories:
+                try:
+                    self.dbx.files_create_folder_v2(directory)
+                    LOGGER.info(f"Created folder: {directory}")
+                except ApiError as e:
+                    if e.error.is_path() and e.error.get_path().is_conflict():
+                        LOGGER.warning(f"Folder already exists: {directory}")
+                    else:
+                        LOGGER.error(f"Failed to create folder {directory}: {e}")
+
+            return True
+
+        except Exception as ex:
+            LOGGER.error(f"Error registering user {username}: {ex}")
+            return False
 
 
 if __name__ == '__main__':
-    # Check for an access token
-    if (len(TOKEN) == 0):
-        sys.exit("ERROR: Looks like you didn't add your access token. "
-            "Open up backup-and-restore-example.py in a text editor and "
-            "paste in your token in line 14.")
-    
-    # Create an instance of a Dropbox class, which can make requests to the API.
-    print("Creating a Dropbox object...")
-    with dropbox.Dropbox(TOKEN) as dbx:
+    """
+    Main script for testing Dropbox connection and registration.
+    """
+    dropbox_integration = DropboxIntegration()
 
-        # Check that the access token is valid
-        try:
-            username = dbx.users_get_current_account()
-            print(username)
-        except AuthError:
-            sys.exit("ERROR: Invalid access token; try re-generating an "
-                "access token from the app console on the web.")
-        
-        print('Done!')
+    # Example user registration
+    user_name = "test_user"
+    user_uuid = "1234-5678-uuid"
+
+    if dropbox_integration.register(user_name, user_uuid):
+        LOGGER.info(f"User {user_name} successfully registered in Dropbox.")
+    else:
+        LOGGER.error(f"Failed to register user {user_name}.")

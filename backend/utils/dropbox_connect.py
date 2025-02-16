@@ -1,46 +1,100 @@
+import os
+import json
+import requests
 import dropbox
-import sys
-from dropbox.exceptions import ApiError, AuthError
+from dropbox.exceptions import AuthError
 from utils.custom_logger import CustomLogger
-
-# Dropbox access token secret (Replace with your actual token)
-TOKEN = ''
 
 # Logger
 LOGGER = CustomLogger(__name__, level=10).get_logger()
 
+# Dropbox App Credentials (Replace with your actual credentials)
+APP_KEY = "f3zpj1mg7wuos1s"
+APP_SECRET = "8o1ebj1wiucq6bk"
+REFRESH_TOKEN = ""
+
+# Token file to store & reuse access tokens
+TOKEN_FILE = "dropbox_token.json"
+
 
 class DropboxConnect:
-    def __init__(self) -> None:
+    def __init__(self):
         """
-        Setup a connection object to Dropbox.
+        Setup a connection object and handle token authentication.
         """
+        self.access_token = self._load_access_token()
+        if not self.access_token:
+            LOGGER.warning("No valid Dropbox token found. Refreshing...")
+            self.access_token = self._refresh_access_token()
+
+        if not self.access_token:
+            LOGGER.critical("Failed to obtain a valid Dropbox token.")
+            raise AuthError("Invalid Dropbox Token.")
+
+        self.dbx = dropbox.Dropbox(self.access_token)
+        self._check_authentication()
+
+    def _load_access_token(self):
+        """
+        Load the saved access token from a file.
+        """
+        if os.path.exists(TOKEN_FILE):
+            with open(TOKEN_FILE, "r") as file:
+                data = json.load(file)
+                return data.get("access_token", None)
+        return None
+
+    def _save_access_token(self, token):
+        """
+        Save the new access token to a file.
+        """
+        with open(TOKEN_FILE, "w") as file:
+            json.dump({"access_token": token}, file)
+        LOGGER.info("New Dropbox access token saved successfully.")
+
+    def _refresh_access_token(self):
+        """
+        Refresh the Dropbox access token using the refresh token.
+        """
+        if not REFRESH_TOKEN:
+            LOGGER.critical("No Dropbox refresh token found. Please generate one.")
+            return None  # Prevent invalid API requests
+
+        url = "https://api.dropbox.com/oauth2/token"
+        payload = {
+            "grant_type": "refresh_token",
+            "refresh_token": REFRESH_TOKEN,
+            "client_id": APP_KEY,
+            "client_secret": APP_SECRET,
+        }
+
+        LOGGER.info(f"Refreshing token with payload: {payload}")  # Debugging
+
         try:
-            if not TOKEN:
-                raise ValueError("Dropbox Access Token is missing.")
+            response = requests.post(url, data=payload)
+            if response.status_code != 200:
+                LOGGER.critical(f"Token refresh failed: {response.status_code}, {response.text}")  # Log exact error
+                return None
 
-            # Initialize Dropbox client
-            self.dbx = dropbox.Dropbox(TOKEN)
-
-            # Verify authentication
-            self._check_authentication()
-
-        except AuthError as auth_err:
-            LOGGER.critical(f"Authentication failed: {auth_err}")
-            sys.exit(1)
-        except Exception as ex:
-            LOGGER.critical(f"Failed to connect to Dropbox: {ex}")
-            sys.exit(1)
+            data = response.json()
+            new_access_token = data["access_token"]
+            self._save_access_token(new_access_token)
+            LOGGER.info("Dropbox access token refreshed successfully.")
+            return new_access_token
+        except requests.exceptions.RequestException as ex:
+            LOGGER.critical(f"Failed to refresh Dropbox access token: {ex}")
+            return None
 
     def _check_authentication(self):
         """
-        Check if authentication to Dropbox is successful.
+        Verify Dropbox authentication.
         """
         try:
             account_info = self.dbx.users_get_current_account()
             LOGGER.info(f"Connected to Dropbox as: {account_info.name.display_name}")
         except AuthError:
-            raise AuthError("Invalid Dropbox Access Token. Authentication failed.")
+            LOGGER.critical("Dropbox authentication failed.")
+            raise AuthError(None, "Invalid Dropbox Access Token.")
 
     def __enter__(self):
         """
@@ -53,22 +107,3 @@ class DropboxConnect:
         Exit runtime context related to this object.
         """
         LOGGER.info("Dropbox connection closed.")
-
-    def check_space_usage(self):
-        """
-        Retrieve Dropbox account space usage.
-        """
-        try:
-            space_usage = self.dbx.users_get_space_usage()
-            LOGGER.info(f"Used: {space_usage.used / (1024 ** 3):.2f} GB, "
-                        f"Allocated: {space_usage.allocation.get_individual().allocated / (1024 ** 3):.2f} GB")
-            return space_usage
-        except ApiError as api_err:
-            LOGGER.error(f"Failed to fetch space usage: {api_err}")
-            return None
-
-
-# Example usage
-if __name__ == "__main__":
-    with DropboxConnect() as dropbox_client:
-        dropbox_client.check_space_usage()
