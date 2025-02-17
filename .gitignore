@@ -221,3 +221,4 @@ dist-ssr
 
 # Dropbox variables
 dropbox_token.json
+OAuth.code
