@@ -1,6 +1,7 @@
 import os
 import json
 import requests
+import webbrowser
 import dropbox
 from dropbox.exceptions import AuthError
 from utils.custom_logger import CustomLogger
@@ -8,79 +9,107 @@ from utils.custom_logger import CustomLogger
 # Logger
 LOGGER = CustomLogger(__name__, level=10).get_logger()
 
-# Dropbox App Credentials (Replace with your actual credentials)
-APP_KEY = "f3zpj1mg7wuos1s"
-APP_SECRET = "8o1ebj1wiucq6bk"
-REFRESH_TOKEN = ""
+# Dropbox App Credentials (Replace these with your actual credentials)
+APP_KEY = "key"
+APP_SECRET = "password"
 
-# Token file to store & reuse access tokens
+# Token file to store & reuse refresh tokens
 TOKEN_FILE = "dropbox_token.json"
 
 
 class DropboxConnect:
     def __init__(self):
         """
-        Setup a connection object and handle token authentication.
+        Setup Dropbox OAuth connection and handle token authentication.
         """
-        self.access_token = self._load_access_token()
-        if not self.access_token:
-            LOGGER.warning("No valid Dropbox token found. Refreshing...")
-            self.access_token = self._refresh_access_token()
+        self.auth_url = f"https://www.dropbox.com/oauth2/authorize?client_id={APP_KEY}&response_type=code&token_access_type=offline"
+        self.access_token = None
+        self.refresh_token = self._load_refresh_token()
 
-        if not self.access_token:
-            LOGGER.critical("Failed to obtain a valid Dropbox token.")
-            raise AuthError("Invalid Dropbox Token.")
+        if not self.refresh_token:
+            LOGGER.warning("No refresh token found. Starting OAuth flow...")
+            self.refresh_token = self._get_refresh_token()
 
+        if not self.refresh_token:
+            LOGGER.critical("Failed to obtain a valid Dropbox refresh token.")
+            raise AuthError(None, "Invalid Dropbox Refresh Token.")
+
+        self.access_token = self._refresh_access_token()
         self.dbx = dropbox.Dropbox(self.access_token)
         self._check_authentication()
 
-    def _load_access_token(self):
+    def _load_refresh_token(self):
         """
-        Load the saved access token from a file.
+        Load the saved refresh token from a file.
         """
         if os.path.exists(TOKEN_FILE):
             with open(TOKEN_FILE, "r") as file:
                 data = json.load(file)
-                return data.get("access_token", None)
+                return data.get("refresh_token", None)
         return None
 
-    def _save_access_token(self, token):
+    def _save_refresh_token(self, refresh_token):
         """
-        Save the new access token to a file.
+        Save the new refresh token to a file.
         """
         with open(TOKEN_FILE, "w") as file:
-            json.dump({"access_token": token}, file)
-        LOGGER.info("New Dropbox access token saved successfully.")
+            json.dump({"refresh_token": refresh_token}, file)
+        LOGGER.info("Dropbox refresh token saved successfully.")
+
+    def _get_refresh_token(self):
+        """
+        Get a new refresh token by completing the OAuth flow.
+        """
+        LOGGER.info("Opening Dropbox OAuth authorization URL...")
+        webbrowser.open(self.auth_url)
+
+        auth_code = input("Enter the authorization code from Dropbox: ").strip()
+        url = "https://api.dropbox.com/oauth2/token"
+        payload = {
+            "code": auth_code,
+            "grant_type": "authorization_code",
+            "client_id": APP_KEY,
+            "client_secret": APP_SECRET,
+        }
+        try:
+            response = requests.post(url, data=payload)
+            response.raise_for_status()
+            data = response.json()
+            refresh_token = data.get("refresh_token")
+
+            if refresh_token:
+                self._save_refresh_token(refresh_token)
+                LOGGER.info("Dropbox OAuth flow completed successfully.")
+                return refresh_token
+
+        except requests.exceptions.RequestException as ex:
+            LOGGER.critical(f"Failed to obtain refresh token: {ex}")
+            return None
 
     def _refresh_access_token(self):
         """
         Refresh the Dropbox access token using the refresh token.
         """
-        if not REFRESH_TOKEN:
-            LOGGER.critical("No Dropbox refresh token found. Please generate one.")
-            return None  # Prevent invalid API requests
+        if not self.refresh_token:
+            LOGGER.critical("No Dropbox refresh token found. Cannot refresh access token.")
+            return None
 
         url = "https://api.dropbox.com/oauth2/token"
         payload = {
             "grant_type": "refresh_token",
-            "refresh_token": REFRESH_TOKEN,
+            "refresh_token": self.refresh_token,
             "client_id": APP_KEY,
             "client_secret": APP_SECRET,
         }
 
-        LOGGER.info(f"Refreshing token with payload: {payload}")  # Debugging
-
         try:
             response = requests.post(url, data=payload)
-            if response.status_code != 200:
-                LOGGER.critical(f"Token refresh failed: {response.status_code}, {response.text}")  # Log exact error
-                return None
-
+            response.raise_for_status()
             data = response.json()
             new_access_token = data["access_token"]
-            self._save_access_token(new_access_token)
             LOGGER.info("Dropbox access token refreshed successfully.")
             return new_access_token
+
         except requests.exceptions.RequestException as ex:
             LOGGER.critical(f"Failed to refresh Dropbox access token: {ex}")
             return None
