@@ -38,7 +38,7 @@ class DropboxIntegration:
 
     def connect(self):
         """
-        Establish a connection to Dropbox.
+        Establish a connection to Dropbox using OAuth.
         """
         try:
             dropbox_client = DropboxConnect()
@@ -87,14 +87,43 @@ class DropboxIntegration:
             LOGGER.error(f"Error registering user {username}: {ex}")
             return False
 
+    def upload_file(self, local_path, dropbox_path):
+        """
+        Upload a file to Dropbox.
+        """
+        try:
+            if not os.path.exists(local_path):
+                LOGGER.error(f"File not found: {local_path}")
+                return False
 
-if __name__ == '__main__':
+            with open(local_path, "rb") as f:
+                self.dbx.files_upload(f.read(), dropbox_path, mode=dropbox.files.WriteMode("overwrite"))
+            LOGGER.info(f"File {local_path} uploaded to {dropbox_path}")
+            return True
+        except ApiError as ex:
+            LOGGER.error(f"Failed to upload {local_path} to Dropbox: {ex}")
+            return False
+
+    def download_file(self, dropbox_path, local_path):
+        """
+        Download a file from Dropbox.
+        """
+        try:
+            self.dbx.files_download_to_file(local_path, dropbox_path)
+            LOGGER.info(f"File {dropbox_path} downloaded to {local_path}")
+            return True
+        except ApiError as ex:
+            LOGGER.error(f"Failed to download {dropbox_path} from Dropbox: {ex}")
+            return False
+
+
+if __name__ == "__main__":
     """
-    Main script for testing Dropbox connection and registration.
+    Main script for testing Dropbox connection, user registration, and file operations.
     """
     dropbox_integration = DropboxIntegration()
 
-    # Example user registration
+    # Example: Register a new user and create their directory structure
     user_name = "test_user"
     user_uuid = "1234-5678-uuid"
 
@@ -102,3 +131,21 @@ if __name__ == '__main__':
         LOGGER.info(f"User {user_name} successfully registered in Dropbox.")
     else:
         LOGGER.error(f"Failed to register user {user_name}.")
+
+    # Example: Upload a test file
+    local_upload_path = "test.txt"
+    dropbox_upload_path = f"/users/{user_uuid}/test.txt"
+
+    upload_success = dropbox_integration.upload_file(local_upload_path, dropbox_upload_path)
+
+    if upload_success:
+        LOGGER.info(f"Successfully uploaded {local_upload_path} to Dropbox.")
+
+    # Example: Download the test file
+    dropbox_download_path = f"/users/{user_uuid}/test.txt"
+    local_download_path = "downloaded_test.txt"
+
+    download_success = dropbox_integration.download_file(dropbox_download_path, local_download_path)
+
+    if download_success:
+        LOGGER.info(f"Successfully downloaded {dropbox_download_path} to {local_download_path}.")
