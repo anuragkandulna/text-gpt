@@ -218,3 +218,6 @@ dist-ssr
 
 # Compressed logs
 *.log.*
+
+# Dropbox variables
+dropbox_token.json
