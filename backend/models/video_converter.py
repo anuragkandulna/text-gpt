@@ -3,7 +3,7 @@ from pytube import YouTube
 from pydub import AudioSegment
 from io import BytesIO
 from utils.custom_logger import CustomLogger
-from constants.constants import MAX_AUDIO_LENGTH_SECS
+from constants.constants import MAX_SUPPORTED_AUDIO_LENGTH_SECS, AUDIO_SEGMENT_LENGTH_SECS, AUDIO_SEGMENT_FILE, TEMP_AUDIO_DIR
 
 
 # Defined constants
@@ -17,8 +17,8 @@ class VideoConverter:
         self.src_video_title = ""
         self.src_video_len = (0, 0, 0)  # (hr, min, sec)
         self.num_segments = 0
-        self.tmp_audio_dir = ""
-        self.tmp_audio_file_names = []
+        self.local_audio_dir = ""
+        self.audio_file_names = []
         # self.full_audio = None
 
         
@@ -52,7 +52,7 @@ class VideoConverter:
             audio = AudioSegment.from_file(audio_file, format="mp4")
             LOGGER.info(f'Successfully converted video {self.url} to audio')
 
-            return audio[:MAX_AUDIO_LENGTH_SECS * 1000]
+            return audio[:MAX_SUPPORTED_AUDIO_LENGTH_SECS * 1000]
 
         except Exception as ex:
             LOGGER.error(f'Failed to process YouTube URL {url}: {ex}')
@@ -62,7 +62,7 @@ class VideoConverter:
         """
         Split processed audio into segments.
         """
-        max_segments = MAX_AUDIO_LENGTH_SECS // self.audio_segment_len
+        max_segments = MAX_SUPPORTED_AUDIO_LENGTH_SECS // AUDIO_SEGMENT_LENGTH_SECS
         segments = []
         segment_duration_ms = self.audio_segment_len * 1000
 
@@ -80,15 +80,15 @@ class VideoConverter:
         """
         Save audio segments locally in /tmp.
         """
-        self.tmp_audio_dir = f"/tmp/{project_id}/audio/"
-        if not os.path.exists(self.tmp_audio_dir):
-            os.makedirs(self.tmp_audio_dir)
-            LOGGER.info(f'Created temp dir for audio: {self.tmp_audio_dir}')
+        self.local_audio_dir = TEMP_AUDIO_DIR.format(project_id=project_id)
+        if not os.path.exists(self.local_audio_dir):
+            os.makedirs(self.local_audio_dir)
+            LOGGER.info(f'Created temp dir for audio: {self.local_audio_dir}')
 
         for i, segment in enumerate(segments):
-            fname = f"{self.src_video_title}_segment_{i + 1}.wav"
-            fpath = os.path.join(self.tmp_audio_dir, fname)
-            self.tmp_audio_file_names.append(fname)
+            fname = AUDIO_SEGMENT_FILE.format(project_id=project_id, part=i+1)
+            fpath = os.path.join(self.local_audio_dir, fname)
+            self.audio_file_names.append(fname)
 
             # Save the audio segment to file
             segment.export(fpath, format="wav")
@@ -105,8 +105,8 @@ class VideoConverter:
             "src_video_title": self.src_video_title,
             "src_video_len": self.src_video_len,
             "num_segments": self.num_segments,
-            "tmp_audio_dir": self.tmp_audio_dir,
-            "tmp_audio_file_names": self.tmp_audio_file_names,
+            "tmp_audio_dir": self.local_audio_dir,
+            "tmp_audio_file_names": self.audio_file_names,
             }
 
 
