@@ -9,7 +9,7 @@ from utils.custom_logger import CustomLogger
 LOGGER = CustomLogger(__name__, level=10).get_logger()
 
 
-class DropboxIntegration:
+class DropboxEngine:
     def __init__(self):
         """
         Initialize Dropbox connection and user attributes.
@@ -121,7 +121,7 @@ if __name__ == "__main__":
     """
     Main script for testing Dropbox connection, user registration, and file operations.
     """
-    dropbox_integration = DropboxIntegration()
+    dropbox_integration = DropboxEngine()
 
     # Example: Register a new user and create their directory structure
     user_name = "test_user"
