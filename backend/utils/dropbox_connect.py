@@ -4,17 +4,11 @@ import requests
 import webbrowser
 import dropbox
 from dropbox.exceptions import AuthError
+from variables import DBX_APP_KEY, DBX_APP_SECRET, DBX_TOKEN_FILE
 from utils.custom_logger import CustomLogger
 
 # Logger
 LOGGER = CustomLogger(__name__, level=10).get_logger()
-
-# Dropbox App Credentials (Replace these with your actual credentials)
-APP_KEY = "key"
-APP_SECRET = "password"
-
-# Token file to store & reuse refresh tokens
-TOKEN_FILE = "dropbox_token.json"
 
 
 class DropboxConnect:
@@ -22,7 +16,7 @@ class DropboxConnect:
         """
         Setup Dropbox OAuth connection and handle token authentication.
         """
-        self.auth_url = f"https://www.dropbox.com/oauth2/authorize?client_id={APP_KEY}&response_type=code&token_access_type=offline"
+        self.auth_url = f"https://www.dropbox.com/oauth2/authorize?client_id={DBX_APP_KEY}&response_type=code&token_access_type=offline"
         self.access_token = None
         self.refresh_token = self._load_refresh_token()
 
@@ -42,8 +36,8 @@ class DropboxConnect:
         """
         Load the saved refresh token from a file.
         """
-        if os.path.exists(TOKEN_FILE):
-            with open(TOKEN_FILE, "r") as file:
+        if os.path.exists(DBX_TOKEN_FILE):
+            with open(DBX_TOKEN_FILE, "r") as file:
                 data = json.load(file)
                 return data.get("refresh_token", None)
         return None
@@ -52,7 +46,7 @@ class DropboxConnect:
         """
         Save the new refresh token to a file.
         """
-        with open(TOKEN_FILE, "w") as file:
+        with open(DBX_TOKEN_FILE, "w") as file:
             json.dump({"refresh_token": refresh_token}, file)
         LOGGER.info("Dropbox refresh token saved successfully.")
 
@@ -68,8 +62,8 @@ class DropboxConnect:
         payload = {
             "code": auth_code,
             "grant_type": "authorization_code",
-            "client_id": APP_KEY,
-            "client_secret": APP_SECRET,
+            "client_id": DBX_APP_KEY,
+            "client_secret": DBX_APP_SECRET,
         }
         try:
             response = requests.post(url, data=payload)
@@ -98,8 +92,8 @@ class DropboxConnect:
         payload = {
             "grant_type": "refresh_token",
             "refresh_token": self.refresh_token,
-            "client_id": APP_KEY,
-            "client_secret": APP_SECRET,
+            "client_id": DBX_APP_KEY,
+            "client_secret": DBX_APP_SECRET,
         }
 
         try:
