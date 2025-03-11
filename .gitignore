@@ -223,3 +223,4 @@ dist-ssr
 dropbox_token.json
 OAuth.code
 env_variables.env
+variables.py
