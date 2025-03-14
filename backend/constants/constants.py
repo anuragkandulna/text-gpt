@@ -1,5 +1,6 @@
 """All project related constants."""
 
+### Project related constants
 MAX_SUPPORTED_AUDIO_LENGTH_SECS = 30
 AUDIO_SEGMENT_LENGTH_SECS = 10
 TEMP_AUDIO_DIR = "/tmp/{project_id}/audio/"
@@ -10,4 +11,8 @@ AUDIO_SEGMENT_FILE = "audio_{project_id}_segment_{part}.wav"
 TRANSCRIPT_SEGMENT_FILE = "transcript_{project_id}_segment_{part}.txt"
 TRANSLATION_SEGMENT_FILE = "translation_{project_id}_segment_{part}.txt"
 SUMMARY_FILE = "summary_{project_id}.txt"
+
+### OpenAI related constants
+MAX_TEMPERATURE = 0.7
+MAX_TOKENS = 100
 
