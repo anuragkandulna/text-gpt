@@ -1,6 +1,6 @@
 """All project related constants."""
 
-MAX_SUPPORTED_AUDIO_LENGTH_SECS = 240
+MAX_SUPPORTED_AUDIO_LENGTH_SECS = 30
 AUDIO_SEGMENT_LENGTH_SECS = 10
 TEMP_AUDIO_DIR = "/tmp/{project_id}/audio/"
 TEMP_TRANSCRIPTION_DIR = "/tmp/{project_id}/transcription/"
