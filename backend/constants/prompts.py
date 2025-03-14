@@ -6,3 +6,10 @@ TRANSLATE_PROMPT_3 = """Provide a natural, fluent translation of this text from 
 TRANSLATE_PROMPT_4 = """Translate this paragraph from {src_language} to {target_language} while keeping the tone and meaning intact: '{text}'"""
 TRANSLATE_PROMPT_5 = """Translate this technical/legal/medical text from {src_language} to {target_language} with precise terminology: '{text}'"""
 TRANSLATE_PROMPT_6 = """Translate this text while preserving cultural nuances and idioms in {target_language}:  '{text}'"""
+
+SUMMARY_PROPMPT_1 = """Can you summarize this article in a few sentences: '{text}'"""
+SUMMARY_PROPMPT_1 = """Summarize this passage into a concise paragraph: '{text}'"""
+SUMMARY_PROPMPT_1 = """Provide a detailed summary of this text, including key points: '{text}'"""
+SUMMARY_PROPMPT_1 = """Summarize this text while maintaining important technical details: '{text}'"""
+SUMMARY_PROPMPT_1 = """Summarize this in bullet points: '{text}'"""
+SUMMARY_PROPMPT_1 = """Give me a bullet-point summary of the key ideas in this text: '{text}'"""
