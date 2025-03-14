@@ -1,6 +1,6 @@
 from openai import OpenAI
 import os
-from constants.variables import OPENAI_API_KEY
+from constants.config import OPENAI_API_KEY
 from constants.prompts import TRANSLATE_PROMPT_1
 from utils.custom_logger import CustomLogger
 
