@@ -2,7 +2,7 @@ import psycopg2
 from psycopg2 import pool
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from backend.constants.variables import DB_NAME, DB_USER, DB_PASSWORD, DB_HOST
+from constants.config import DB_NAME, DB_USER, DB_PASSWORD, DB_HOST
 from utils.custom_logger import CustomLogger
 
 
