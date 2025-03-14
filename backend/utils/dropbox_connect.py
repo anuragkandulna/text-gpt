@@ -4,7 +4,7 @@ import requests
 import webbrowser
 import dropbox
 from dropbox.exceptions import AuthError
-from variables import DBX_APP_KEY, DBX_APP_SECRET, DBX_TOKEN_FILE
+from constants.config import DBX_APP_KEY, DBX_APP_SECRET, DBX_TOKEN_FILE
 from utils.custom_logger import CustomLogger
 
 # Logger
