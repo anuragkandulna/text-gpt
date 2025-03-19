@@ -3,7 +3,7 @@ from pytube import YouTube
 from pydub import AudioSegment
 from io import BytesIO
 from utils.custom_logger import CustomLogger
-from constants.constants import MAX_SUPPORTED_AUDIO_LENGTH_SECS, AUDIO_SEGMENT_LENGTH_SECS, AUDIO_SEGMENT_FILE, TEMP_AUDIO_DIR
+from constants.constants import MAX_AUDIO_SEGMENT_COUNT, MAX_AUDIO_SEGMENT_LENGTH_SECS, AUDIO_SEGMENT_FILE, TEMP_AUDIO_DIR
 
 
 # Defined constants
@@ -12,23 +12,21 @@ LOGGER = CustomLogger(__name__, level=10).get_logger()
 
 class VideoConverter:
     def __init__(self):
-        self.url = ""
-        self.audio_segment_len = 0
-        self.src_video_title = ""
+        self.url = "some_url"
+        self.src_video_title = "some_title"
         self.src_video_len = (0, 0, 0)  # (hr, min, sec)
-        self.num_segments = 0
-        self.local_audio_dir = ""
+        self.local_audio_dir = "/tmp/"
         self.audio_file_names = []
-        # self.full_audio = None
+        self.project_id = "id1234"
 
         
-    def process_video_url(self, url, audio_segment_len):
+    def process_video_url(self, url, project_id, destination_dir):
         """
         Take URL and load it into memory.
         """
         # Update all video meta
         self.url = url
-        self.audio_segment_len = audio_segment_len
+        # self.audio_segment_len = audio_segment_len
 
         # Download video and process it
         try:
@@ -49,38 +47,49 @@ class VideoConverter:
 
             # Save audio to file
             audio_file.seek(0)
-            audio = AudioSegment.from_file(audio_file, format="mp4")
+            yt_audio = AudioSegment.from_file(audio_file, format="mp4")
             LOGGER.info(f'Successfully converted video {self.url} to audio')
 
-            return audio[:MAX_SUPPORTED_AUDIO_LENGTH_SECS * 1000]
+            # max_audio_ms = MAX_AUDIO_SEGMENT_COUNT * MAX_AUDIO_SEGMENT_LENGTH_SECS * 1000
+            # if len(yt_audio) >= max_audio_ms:
+                # audio_segments = self.split_audio_into_segments(yt_audio[:max_audio_ms])
+            # else:
+            audio_segments = self.split_audio_into_segments(yt_audio)
+            self._save_segments_to_wav(project_id=project_id, destination_dir=destination_dir)
+
+            # return audio[:MAX_SUPPORTED_AUDIO_LENGTH_SECS * 1000]
 
         except Exception as ex:
             LOGGER.error(f'Failed to process YouTube URL {url}: {ex}')
 
 
-    def split_audio_into_segments(self, audio):
+    def _split_audio_into_segments(self, audio):
         """
         Split processed audio into segments.
         """
-        max_segments = MAX_SUPPORTED_AUDIO_LENGTH_SECS // AUDIO_SEGMENT_LENGTH_SECS
+        max_audio_ms = min(MAX_AUDIO_SEGMENT_COUNT * MAX_AUDIO_SEGMENT_LENGTH_SECS * 1000, len(audio))
+        # max_segments = MAX_SUPPORTED_AUDIO_LENGTH_SECS // AUDIO_SEGMENT_LENGTH_SECS
         segments = []
-        segment_duration_ms = self.audio_segment_len * 1000
+        segment_duration_ms = MAX_AUDIO_SEGMENT_LENGTH_SECS * 1000
 
         # Iterage through entire audio range and spilt into segments
         for i in range(0, len(audio), segment_duration_ms):
-            segments.append(audio[i:i + segment_duration_ms])
+            try:
+                segments.append(audio[i:i + segment_duration_ms])
+            except:
+                segments.append(audio[i:])
         
-        self.num_segments = min(len(segments), max_segments)
-        LOGGER.info(f'{self.src_video_title} is cut into {self.num_segments} segments.')
+        # self.num_segments = min(len(segments), max_segments)
+        LOGGER.info(f'{self.src_video_title} is cut into {len(segments)} segments.')
 
         return segments
 
 
-    def save_segments_to_wav(self, project_id, segments):
+    def _save_segments_to_wav(self, segments, project_id):
         """
         Save audio segments locally in /tmp.
         """
-        self.local_audio_dir = TEMP_AUDIO_DIR.format(project_id=project_id)
+        # self.local_audio_dir = TEMP_AUDIO_DIR.format(project_id=project_id)
         if not os.path.exists(self.local_audio_dir):
             os.makedirs(self.local_audio_dir)
             LOGGER.info(f'Created temp dir for audio: {self.local_audio_dir}')
