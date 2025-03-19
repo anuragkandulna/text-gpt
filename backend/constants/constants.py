@@ -1,8 +1,8 @@
 """All project related constants."""
 
 ### Project related constants
-MAX_SUPPORTED_AUDIO_LENGTH_SECS = 2
-AUDIO_SEGMENT_LENGTH_SECS = 5
+MAX_AUDIO_SEGMENT_COUNT = 2
+MAX_AUDIO_SEGMENT_LENGTH_SECS = 5
 TEMP_TEXTGPT_DIR = "/var/tmp/textgpt"
 TEMP_AUDIO_DIR = f"{TEMP_TEXTGPT_DIR}/{project_id}/audio/"
 TEMP_TRANSCRIPTION_DIR = f"{TEMP_TEXTGPT_DIR}/{project_id}/transcription/"
