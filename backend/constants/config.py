@@ -19,6 +19,10 @@ DB_USER = os.getenv('DB_USER')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
 DB_HOST = os.getenv('DB_HOST')
 
+# JWT keys
+JWT_SECRET_KEY = os.getenv('JWT_SECRET_KEY')
+
+
 if not OPENAI_API_KEY:
     raise ValueError('OpenAI api key not found in .env file.')
 
@@ -45,3 +49,6 @@ if not DB_PASSWORD:
 
 if not DB_HOST:
     raise ValueError('Database Host not found in .env file.')
+
+if not JWT_SECRET_KEY:
+    raise ValueError('JWT secret key not found in .env file.')
