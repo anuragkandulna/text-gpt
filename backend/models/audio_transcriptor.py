@@ -32,8 +32,9 @@ class AudioTranscriptionEngine:
         with open(local_transcript_full_path) as f:
             f.write(text)
         
-        LOGGER.info(f'Audio source {source_audio_file} transcribed to file {local_transcript_full_path}')
+        LOGGER.info(f'Audio source {source_audio_file} transcribed to file {local_transcript_full_path} in language {source_language}')
         return {
+            "project_id": project_id,
             "part": part,
             "source_audio_file": source_audio_file,
             "transcript_file_path": local_transcript_full_path,
