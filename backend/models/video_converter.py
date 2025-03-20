@@ -11,39 +11,60 @@ LOGGER = CustomLogger(__name__, level=10).get_logger()
 
 
 class VideoConverter:
-    def __init__(self):
-        self.url = "some_url"
+    def __init__(self, url, project_id, destination_dir):
+        self.url = url
         self.src_video_title = "some_title"
-        self.src_video_len = (0, 0, 0)  # (hr, min, sec)
-        self.local_audio_dir = "/tmp/"
+        self.src_video_len_secs = 0     # secs
+        self.src_video_len_hours = (0, 0, 0)    # (hr, min, sec)
+        self.local_audio_dir = destination_dir
         self.audio_file_names = []
-        self.project_id = "id1234"
+        self.project_id = project_id
 
+        # Initially process video url and update metadata
+        yt_video = YouTube(self.url)
+        self.src_video_title = yt_video.title
+        self.audio_stream = yt_video.streams.filter(only_audio=True).first()
+        LOGGER.debug(f'Successfully downloaded Youtube video from URL: {self.url}')
+
+        self.src_video_len_secs = yt_video.length
+        hr, rem = divmod(self.src_video_len_secs, 3600)
+        min, sec = divmod(rem, 60)
+        self.src_video_len = (hr, min, sec)
+        LOGGER.info(f'YouTube video title: {self.src_video_title} Length: {self.src_video_len_hours}')
+
+        # Calculate segments and build file names
+        max_audio_segments  = min(MAX_AUDIO_SEGMENT_COUNT, self.src_video_len_secs//MAX_AUDIO_SEGMENT_LENGTH_SECS)
+        for i in range(max_audio_segments):
+            audio_file_name = AUDIO_SEGMENT_FILE.format(project_id=project_id, part=i+1)
+            audio_file_path = os.path.join(self.local_audio_dir, audio_file_name)
+
+            audio_segment_dict = {
+                "audio_file_path": audio_file_path,
+                "is_converted": False
+            }
+            self.audio_file_names.append(audio_segment_dict)
         
-    def process_video_url(self, url, project_id, destination_dir):
+        processed_video_metadata = {
+            "url": self.url,
+            "src_video_title": self.src_video_title,
+            "src_video_length": self.src_video_len_hours,
+            "temp_audio_dir": self.local_audio_dir,
+            "audio_segments": self.audio_file_names,
+            "project_id": self.project_id
+        }
+        LOGGER.info(f"Successfully processed Youtube video metadata: {processed_video_metadata}")
+        return processed_video_metadata
+
+
+    def process_audio(self):
         """
         Take URL and load it into memory.
         """
-        # Update all video meta
-        self.url = url
-        self.local_audio_dir = destination_dir
-
-        # Download video and process it
         try:
-            yt_video = YouTube(url)
-            self.src_video_title = yt_video.title
-            LOGGER.debug(f'Successfully downloaded Youtube video from URL: {self.url}')
-
-            total_video_len = yt_video.length
-            hr, rem = divmod(total_video_len, 3600)
-            min, sec = divmod(rem, 60)
-            self.src_video_len = (hr, min, sec)
-            LOGGER.info(f'YouTube video title: {self.src_video_title} Length: {self.src_video_len}')
-
             # Extract Only audio and load into memory
-            audio_stream = yt_video.streams.filter(only_audio=True).first()
+            # audio_stream = self.yt_video.streams.filter(only_audio=True).first()
             audio_file = BytesIO()
-            audio_stream.stream_to_buffer(audio_file)
+            self.audio_stream.stream_to_buffer(audio_file)
 
             # Save audio to file
             audio_file.seek(0)
@@ -52,19 +73,19 @@ class VideoConverter:
 
             # Split the audio into segments
             audio_segments = self.split_audio_into_segments(yt_audio)
-            self._save_segments_to_wav(project_id=project_id, destination_dir=self.local_audio_dir)
+            self._save_segments_to_wav(project_id=self.project_id, destination_dir=self.local_audio_dir)
 
             return {
                 "url": self.url,
                 "src_video_title": self.src_video_title,
-                "src_video_length": self.src_video_len,
+                "src_video_length": self.src_video_len_hours,
                 "temp_audio_dir": self.local_audio_dir,
                 "audio_segments": self.audio_file_names,
                 "project_id": self.project_id
             }
 
         except Exception as ex:
-            LOGGER.error(f'Failed to process YouTube URL {url}: {ex}')
+            LOGGER.error(f'Failed to process YouTube URL {self.url}: {ex}')
 
 
     def _split_audio_into_segments(self, audio):
