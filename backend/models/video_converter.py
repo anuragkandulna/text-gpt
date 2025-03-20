@@ -3,7 +3,7 @@ from pytube import YouTube
 from pydub import AudioSegment
 from io import BytesIO
 from utils.custom_logger import CustomLogger
-from constants.constants import MAX_AUDIO_SEGMENT_COUNT, MAX_AUDIO_SEGMENT_LENGTH_SECS, AUDIO_SEGMENT_FILE, TEMP_AUDIO_DIR
+from constants.constants import MAX_AUDIO_SEGMENT_COUNT, MAX_AUDIO_SEGMENT_LENGTH_SECS, AUDIO_SEGMENT_FILE
 
 
 # Defined constants
@@ -26,7 +26,7 @@ class VideoConverter:
         """
         # Update all video meta
         self.url = url
-        # self.audio_segment_len = audio_segment_len
+        self.local_audio_dir = destination_dir
 
         # Download video and process it
         try:
@@ -50,14 +50,18 @@ class VideoConverter:
             yt_audio = AudioSegment.from_file(audio_file, format="mp4")
             LOGGER.info(f'Successfully converted video {self.url} to audio')
 
-            # max_audio_ms = MAX_AUDIO_SEGMENT_COUNT * MAX_AUDIO_SEGMENT_LENGTH_SECS * 1000
-            # if len(yt_audio) >= max_audio_ms:
-                # audio_segments = self.split_audio_into_segments(yt_audio[:max_audio_ms])
-            # else:
+            # Split the audio into segments
             audio_segments = self.split_audio_into_segments(yt_audio)
-            self._save_segments_to_wav(project_id=project_id, destination_dir=destination_dir)
+            self._save_segments_to_wav(project_id=project_id, destination_dir=self.local_audio_dir)
 
-            # return audio[:MAX_SUPPORTED_AUDIO_LENGTH_SECS * 1000]
+            return {
+                "url": self.url,
+                "src_video_title": self.src_video_title,
+                "src_video_length": self.src_video_len,
+                "temp_audio_dir": self.local_audio_dir,
+                "audio_segments": self.audio_file_names,
+                "project_id": self.project_id
+            }
 
         except Exception as ex:
             LOGGER.error(f'Failed to process YouTube URL {url}: {ex}')
@@ -102,21 +106,3 @@ class VideoConverter:
             # Save the audio segment to file
             segment.export(fpath, format="wav")
             LOGGER.info(f'Saved {fname} audio segment to {fpath}')
-
-
-    def get_metadata(self):
-        """
-        Get all info related to this converted video in JSON format.
-        """
-        return {
-            "url": self.url,
-            "audio_segment_len": self.audio_segment_len,
-            "src_video_title": self.src_video_title,
-            "src_video_len": self.src_video_len,
-            "num_segments": self.num_segments,
-            "tmp_audio_dir": self.local_audio_dir,
-            "tmp_audio_file_names": self.audio_file_names,
-            }
-
-
-
