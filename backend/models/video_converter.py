@@ -61,56 +61,66 @@ class VideoConverter:
         Take URL and load it into memory.
         """
         try:
+            # Create audio directory
+            if not os.path.exists(self.local_audio_dir):
+                os.makedirs(self.local_audio_dir)
+                LOGGER.info(f'Created temp dir for audio: {self.local_audio_dir}')
+
             # Extract Only audio and load into memory
-            # audio_stream = self.yt_video.streams.filter(only_audio=True).first()
             audio_file = BytesIO()
             self.audio_stream.stream_to_buffer(audio_file)
-
-            # Save audio to file
             audio_file.seek(0)
-            # yt_audio = AudioSegment.from_file(audio_file, format="mp4")
-            LOGGER.info(f'Successfully converted video {self.url} to audio')
 
-            # Split the audio into segments
-            audio_segments = self._split_audio_into_segments()
-            if len(audio_segments) == len(self.audio_file_names):
-                self._save_segments_to_wav()
-            else:
-                raise ValueError("Expected number of audio segments did not match.")
+            # Split audio into segment and save
+            i = 0
+            for index, audio_dict in self.audio_file_names:
+                try:
+                    audio_part = self.audio_stream[i:i+MAX_AUDIO_SEGMENT_LENGTH_SECS]
+                except:
+                    audio_part = self.audio_stream[i:]
+                finally:
+                    file_path = audio_dict["audio_file_path"]
+                    audio_part.export(file_path, format="wav")
+                    self.audio_file_names[index]["is_converted"] = True
+                    LOGGER.info(f'Saved audio segment {index} to {file_path}')
+                    i = i + MAX_AUDIO_SEGMENT_LENGTH_SECS + 1
+            
+            return True
 
         except Exception as ex:
-            LOGGER.error(f'Failed to process YouTube URL {self.url}: {ex}')
+            LOGGER.error(f'Failed to process YouTube URL {self.url} to audio: {ex}')
+            return False
 
 
-    def _split_audio_into_segments(self):
-        """
-        Split processed audio into segments.
-        """
-        max_audio_ms = min(MAX_AUDIO_SEGMENT_COUNT * MAX_AUDIO_SEGMENT_LENGTH_SECS * 1000, len(self.audio_stream))
-        segments = []
-        segment_duration_ms = MAX_AUDIO_SEGMENT_LENGTH_SECS * 1000
+    # def _split_audio_into_segments(self):
+    #     """
+    #     Split processed audio into segments.
+    #     """
+    #     max_audio_ms = min(MAX_AUDIO_SEGMENT_COUNT * MAX_AUDIO_SEGMENT_LENGTH_SECS * 1000, len(self.audio_stream))
+    #     segments = []
+    #     segment_duration_ms = MAX_AUDIO_SEGMENT_LENGTH_SECS * 1000
 
-        # Iterage through entire audio range and spilt into segments
-        for i in range(0, len(self.audio), segment_duration_ms):
-            try:
-                segments.append(self.audio[i:i + segment_duration_ms])
-            except:
-                segments.append(self.audio[i:])
+    #     # Iterage through entire audio range and spilt into segments
+    #     for i in range(0, len(self.audio), segment_duration_ms):
+    #         try:
+    #             segments.append(self.audio[i:i + segment_duration_ms])
+    #         except:
+    #             segments.append(self.audio[i:])
         
-        LOGGER.info(f'{self.src_video_title} is cut into {len(segments)} segments.')
-        return segments
+    #     LOGGER.info(f'{self.src_video_title} is cut into {len(segments)} segments.')
+    #     return segments
 
 
-    def _save_segments_to_wav(self, segments):
-        """
-        Save audio segments locally in /tmp.
-        """
-        if not os.path.exists(self.local_audio_dir):
-            os.makedirs(self.local_audio_dir)
-            LOGGER.info(f'Created temp dir for audio: {self.local_audio_dir}')
+    # def _save_segments_to_wav(self, segments):
+    #     """
+    #     Save audio segments locally in /tmp.
+    #     """
+    #     if not os.path.exists(self.local_audio_dir):
+    #         os.makedirs(self.local_audio_dir)
+    #         LOGGER.info(f'Created temp dir for audio: {self.local_audio_dir}')
 
-        for i in range(len(segments)):
-            file_path = self.audio_file_names[i]["audio_file_path"]
-            segments[i].export(file_path, format="wav")
-            self.audio_file_names[i]["is_converted"] = True
-            LOGGER.info(f'Saved audio segment to {file_path}')
+    #     for i in range(len(segments)):
+    #         file_path = self.audio_file_names[i]["audio_file_path"]
+    #         segments[i].export(file_path, format="wav")
+    #         self.audio_file_names[i]["is_converted"] = True
+    #         LOGGER.info(f'Saved audio segment to {file_path}')
