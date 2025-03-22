@@ -9,6 +9,23 @@ LOGGER = CustomLogger(__name__, level=10).get_logger()
 
 
 class AudioTranscriptionEngine:
+    def __init__(self):
+        self.src_audio_files = []
+        self.src_language = "English"
+        self.project_id = "id1234"
+        self.transcript_files = []
+        self.transcribe_all = False
+
+
+    def transcribe_all(self, audio_files, source_language, project_id):
+        """
+        Load all audio files in a directory and transcribe it one by one.
+        """
+        self.src_audio_files = audio_files
+        
+
+
+
 
     def transcribe_audio(self, source_audio_file, source_language, project_id, part):
         """
@@ -38,6 +55,5 @@ class AudioTranscriptionEngine:
             "part": part,
             "source_audio_file": source_audio_file,
             "transcript_file_path": local_transcript_full_path,
-            "transcript_file_name": local_fname,
-            "data": text
+            "transcript_file_name": local_fname
         }
