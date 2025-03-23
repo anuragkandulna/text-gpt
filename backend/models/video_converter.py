@@ -92,6 +92,17 @@ class VideoConverter:
             return False
 
 
+    def is_conversion_done(self, part):
+        """
+        Check if video conversion is completed and segmented audio file is created.
+        """
+        if not 0 <= part < len(self.audio_file_names):
+            LOGGER.info("Invalid index.")
+            return
+
+        return  (os.path.exists(self.audio_file_names[part]["audio_file_path"]) and self.audio_file_names[part]["is_converted"])
+
+
     # def _split_audio_into_segments(self):
     #     """
     #     Split processed audio into segments.
