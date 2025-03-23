@@ -1,4 +1,5 @@
 import os
+import threading
 from pytube import YouTube
 from pydub import AudioSegment
 from io import BytesIO
@@ -91,6 +92,14 @@ class VideoConverter:
             LOGGER.error(f'Failed to process YouTube URL {self.url} to audio: {ex}')
             return False
 
+    
+    def process_audio_in_background(self):
+        """
+        Invoke thread to process audio in background.
+        """
+        thread = threading.Thread(target=self.process_audio)
+        thread.start()
+
 
     def is_conversion_done(self, part):
         """
@@ -101,37 +110,3 @@ class VideoConverter:
             return
 
         return  (os.path.exists(self.audio_file_names[part]["audio_file_path"]) and self.audio_file_names[part]["is_converted"])
-
-
-    # def _split_audio_into_segments(self):
-    #     """
-    #     Split processed audio into segments.
-    #     """
-    #     max_audio_ms = min(MAX_AUDIO_SEGMENT_COUNT * MAX_AUDIO_SEGMENT_LENGTH_SECS * 1000, len(self.audio_stream))
-    #     segments = []
-    #     segment_duration_ms = MAX_AUDIO_SEGMENT_LENGTH_SECS * 1000
-
-    #     # Iterage through entire audio range and spilt into segments
-    #     for i in range(0, len(self.audio), segment_duration_ms):
-    #         try:
-    #             segments.append(self.audio[i:i + segment_duration_ms])
-    #         except:
-    #             segments.append(self.audio[i:])
-        
-    #     LOGGER.info(f'{self.src_video_title} is cut into {len(segments)} segments.')
-    #     return segments
-
-
-    # def _save_segments_to_wav(self, segments):
-    #     """
-    #     Save audio segments locally in /tmp.
-    #     """
-    #     if not os.path.exists(self.local_audio_dir):
-    #         os.makedirs(self.local_audio_dir)
-    #         LOGGER.info(f'Created temp dir for audio: {self.local_audio_dir}')
-
-    #     for i in range(len(segments)):
-    #         file_path = self.audio_file_names[i]["audio_file_path"]
-    #         segments[i].export(file_path, format="wav")
-    #         self.audio_file_names[i]["is_converted"] = True
-    #         LOGGER.info(f'Saved audio segment to {file_path}')
