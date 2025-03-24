@@ -35,6 +35,7 @@ class AudioTranscriptionEngine:
             "src_audio_files": self.src_audio_files,
             "transcript_files": self.transcript_files
         }
+        return transcripts_metadata
 
 
     def transcribe_audio(self):
