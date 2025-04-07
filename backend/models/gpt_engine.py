@@ -11,7 +11,17 @@ client = OpenAI(api_key = OPENAI_API_KEY)
 
 
 class GPTEngine:    
-    def translate_text(self, text, src_language, target_language):
+    def __init__(self, project_id, transcript_files):
+        self.project_id = project_id,
+        self.transcript_files = transcript_files
+
+        # Combine transcripts into single file
+        transcript_input_text = ''
+        for index, transcript_dict in self.transcript_files:
+            pass
+
+
+    def _translate_text(self, text, src_language, target_language):
         """
         Translate source text into target language.
         """
@@ -43,7 +53,7 @@ class GPTEngine:
             return None
 
 
-    def summarize_text(self, text):
+    def _summarize_text(self, text):
         """
         Summarize text while preserving context.
         """
