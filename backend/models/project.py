@@ -56,102 +56,102 @@ class Project(Base):
         return validators.url(url) and bool(re.match(youtube_regex, url))
 
 
-def create_project(title, url, audio_segment_len, src_video_lang):
-    """
-    Create a new project and add it to the database.
-    """
-    if not Project.is_valid_youtube_url(url):
-        raise ValueError("Invalid YouTube URL")
+    def create_project(title, url, audio_segment_len, src_video_lang):
+        """
+        Create a new project and add it to the database.
+        """
+        if not Project.is_valid_youtube_url(url):
+            raise ValueError("Invalid YouTube URL")
 
-    session = SessionLocal()
-    try:
-        project = Project(
-            title=title,
-            url=url,
-            audio_segment_len=audio_segment_len,
-            src_video_lang=src_video_lang,
-            audio_dir=f"./{uuid.uuid4()}/audio/",
-            transcription_dir=f"./{uuid.uuid4()}/transcriptions/",
-            translation_dir=f"./{uuid.uuid4()}/translations/",
-            summary_dir=f"./{uuid.uuid4()}/summaries/",
-        )
+        session = SessionLocal()
+        try:
+            project = Project(
+                title=title,
+                url=url,
+                audio_segment_len=audio_segment_len,
+                src_video_lang=src_video_lang,
+                audio_dir=f"./{uuid.uuid4()}/audio/",
+                transcription_dir=f"./{uuid.uuid4()}/transcriptions/",
+                translation_dir=f"./{uuid.uuid4()}/translations/",
+                summary_dir=f"./{uuid.uuid4()}/summaries/",
+            )
 
-        session.add(project)
-        session.commit()
-        LOGGER.info(f"Project {title} created successfully.")
-        return project
+            session.add(project)
+            session.commit()
+            LOGGER.info(f"Project {title} created successfully.")
+            return project
 
-    except Exception as ex:
-        session.rollback()
-        LOGGER.error(f"Error while creating project {title}: {ex}")
-        raise
+        except Exception as ex:
+            session.rollback()
+            LOGGER.error(f"Error while creating project {title}: {ex}")
+            raise
 
-    finally:
-        session.close()
-
-
-def fetch_project(project_id):
-    """
-    Fetch a project by its ID.
-    """
-    session = SessionLocal()
-    try:
-        return session.query(Project).filter(Project.project_id == project_id).first()
-
-    except Exception as ex:
-        LOGGER.error(f"Error fetching project {project_id}: {ex}")
-        raise
-
-    finally:
-        session.close()
+        finally:
+            session.close()
 
 
-def update_project(project_id, updates):
-    """
-    Update a project with new details.
-    """
-    session = SessionLocal()
-    try:
-        project = session.query(Project).filter(Project.project_id == project_id).first()
-        if not project:
-            return None
+    def fetch_project(project_id):
+        """
+        Fetch a project by its ID.
+        """
+        session = SessionLocal()
+        try:
+            return session.query(Project).filter(Project.project_id == project_id).first()
 
-        for key, value in updates.items():
-            setattr(project, key, value)
+        except Exception as ex:
+            LOGGER.error(f"Error fetching project {project_id}: {ex}")
+            raise
 
-        project.updated_at = datetime.utcnow()
-        session.commit()
-        LOGGER.info(f"Updated project {project_id} with {updates}.")
-        return project
-
-    except Exception as ex:
-        session.rollback()
-        LOGGER.error(f"Error updating project {project_id}: {ex}")
-        raise
-
-    finally:
-        session.close()
+        finally:
+            session.close()
 
 
-def delete_project(project_id):
-    """
-    Soft delete a project by setting is_deleted to True.
-    """
-    session = SessionLocal()
-    try:
-        project = session.query(Project).filter(Project.project_id == project_id).first()
-        if project:
-            project.is_deleted = True
+    def update_project(project_id, updates):
+        """
+        Update a project with new details.
+        """
+        session = SessionLocal()
+        try:
+            project = session.query(Project).filter(Project.project_id == project_id).first()
+            if not project:
+                return None
+
+            for key, value in updates.items():
+                setattr(project, key, value)
+
             project.updated_at = datetime.utcnow()
             session.commit()
-            LOGGER.info(f"Project {project_id} marked as deleted.")
-            return True
-        return False
+            LOGGER.info(f"Updated project {project_id} with {updates}.")
+            return project
 
-    except Exception as ex:
-        session.rollback()
-        LOGGER.error(f"Error marking project {project_id} as deleted: {ex}")
-        raise
+        except Exception as ex:
+            session.rollback()
+            LOGGER.error(f"Error updating project {project_id}: {ex}")
+            raise
 
-    finally:
-        session.close()
+        finally:
+            session.close()
+
+
+    def delete_project(project_id):
+        """
+        Soft delete a project by setting is_deleted to True.
+        """
+        session = SessionLocal()
+        try:
+            project = session.query(Project).filter(Project.project_id == project_id).first()
+            if project:
+                project.is_deleted = True
+                project.updated_at = datetime.utcnow()
+                session.commit()
+                LOGGER.info(f"Project {project_id} marked as deleted.")
+                return True
+            return False
+
+        except Exception as ex:
+            session.rollback()
+            LOGGER.error(f"Error marking project {project_id} as deleted: {ex}")
+            raise
+
+        finally:
+            session.close()
