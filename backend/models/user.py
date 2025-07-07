@@ -30,70 +30,70 @@ class User(Base):
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
 
-def create_new_user(username, password_hash):
-    """
-    Create a new user in the database.
-    """
-    session = SessionLocal()
-    try:
-        user = User(
-            username=username,
-            email=username,  # Assuming email is the same as username for now
-            password_hash=password_hash,
-            role=None,
-            is_active=True,
-        )
+    def create_new_user(username, password_hash):
+        """
+        Create a new user in the database.
+        """
+        session = SessionLocal()
+        try:
+            user = User(
+                username=username,
+                email=username,  # Assuming email is the same as username for now
+                password_hash=password_hash,
+                role=None,
+                is_active=True,
+            )
 
-        session.add(user)
-        session.commit()
-        LOGGER.info(f"User {username} created successfully.")
-        return user
+            session.add(user)
+            session.commit()
+            LOGGER.info(f"User {username} created successfully.")
+            return user
 
-    except Exception as ex:
-        session.rollback()
-        LOGGER.error(f"Failed to create new user: {ex}")
-        raise
+        except Exception as ex:
+            session.rollback()
+            LOGGER.error(f"Failed to create new user: {ex}")
+            raise
 
-    finally:
-        session.close()
-
-
-def get_user_id(username):
-    """
-    Fetch the user ID for a given username.
-    """
-    session = SessionLocal()
-    try:
-        user = session.query(User).filter(User.username == username).first()
-        return user.user_id if user else None
-
-    except Exception as ex:
-        LOGGER.error(f"Failed to fetch user ID: {ex}")
-        raise
-
-    finally:
-        session.close()
+        finally:
+            session.close()
 
 
-def find_by_username(username):
-    """
-    Retrieve user details by username.
-    """
-    session = SessionLocal()
-    try:
-        user = session.query(User).filter(User.username == username).first()
-        if user:
-            return {
-                "username": user.username,
-                "email": user.email,
-                "password_hash": user.password_hash,
-                "is_active": user.is_active,
-            }
-        return None
+    def get_user_id(username):
+        """
+        Fetch the user ID for a given username.
+        """
+        session = SessionLocal()
+        try:
+            user = session.query(User).filter(User.username == username).first()
+            return user.user_id if user else None
 
-    except Exception as ex:
-        LOGGER.error(f"Failed to fetch user data: {ex}")
-        raise
+        except Exception as ex:
+            LOGGER.error(f"Failed to fetch user ID: {ex}")
+            raise
 
-    finally:
-        session.close()
+        finally:
+            session.close()
+
+
+    def find_by_username(username):
+        """
+        Retrieve user details by username.
+        """
+        session = SessionLocal()
+        try:
+            user = session.query(User).filter(User.username == username).first()
+            if user:
+                return {
+                    "username": user.username,
+                    "email": user.email,
+                    "password_hash": user.password_hash,
+                    "is_active": user.is_active,
+                }
+            return None
+
+        except Exception as ex:
+            LOGGER.error(f"Failed to fetch user data: {ex}")
+            raise
+
+        finally:
+            session.close()
